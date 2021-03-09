@@ -27,6 +27,7 @@ hop_size = 128
 duration = 0
 w_duration = hop_size*signal_duration/signal.size
 total_signal = []
+
 for i in range (0,signal.size,hop_size):
     w_signal = signal[i:(i+buffer_size)]
     n_signal = pre_processing(w_signal)
