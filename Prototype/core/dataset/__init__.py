@@ -1,1 +1,1 @@
-from .reader import Reader
+from .reader import read_dataset,get_dataset
