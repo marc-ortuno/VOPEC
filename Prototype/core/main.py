@@ -1,11 +1,11 @@
 import os
 import numpy as np
-import wave
 from dataset import get_dataset
 from utils import plot_audio
 from interfaces import pre_processing, activity_detection, feature_extraction, classificator
 from models import Waveform
 from matplotlib import pyplot as plt
+
 
 #Load dataset to train ML
 data = get_dataset("Snare","2") 
@@ -13,14 +13,11 @@ wave_data = data[5]
 # plot_audio(wave_data)
 
 
+audio_sample_rate = 44100
+audio = Waveform(path="./data/AFRP2.wav",sample_rate=audio_sample_rate)
+signal = audio.waveform
+signal_duration = signal.size/audio_sample_rate;
 
-audio = wave.open("./data/AFRP2.wav","rb")
-nframes = audio.getnframes()
-framerate = audio.getframerate()
-signal = audio.readframes(nframes)
-signal_duration = nframes/framerate;
-audio.close()
-signal = np.frombuffer(signal, dtype=np.short)
 
 buffer_size = 512
 hop_size = 128

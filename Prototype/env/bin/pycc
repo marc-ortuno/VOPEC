@@ -1,0 +1,3 @@
+#!/home/marc/Escritorio/Vocal-Percussion-Classification-for-Real-Time-Context/Prototype/env/bin/python3
+from numba.pycc import main
+main()
