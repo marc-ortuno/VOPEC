@@ -1,9 +1,10 @@
-import wave
+
+# From surfboard import Waveform Class: https://github.com/novoic/surfboard
 import numpy as np
 import librosa 
 
 class Waveform:
-    def __init__(self,path= None, signal=None, sample_rate = 44100, filename= None):
+    def __init__(self,path= None, signal=None, sample_rate = 44100, filename= None,class_type=None):
         """
         Instantiate an object of this class. This loads the audio into a (T,) np.array: self.waveform.
             Args:
@@ -30,9 +31,12 @@ class Waveform:
         else:
             self._waveform = signal
 
+        assert self.waveform.shape[0] > 1, "Your waveform must have more than one element."
 
         self._sample_rate = sample_rate
         self._filename = filename
+        self._class_type = class_type
+        self._duration = librosa.get_duration(y=self._waveform,sr=self._sample_rate)
         self._path = path
     
     @property
@@ -45,13 +49,22 @@ class Waveform:
         """Properties written in this way prevent users to assign to self.sample_rate"""
         return self._sample_rate
 
-    def magnitude_spectrum(self, n_fft=512, hop_length=128):
-        """Compute the STFT of self.waveform. This is used for further spectral analysis.
-        Args:
-            n_fft_seconds (float): Length of the FFT window in seconds.
-            hop_length_seconds (float): How much the window shifts for every timestep, in seconds.
-        Returns:
-            np.array, [n_fft / 2 + 1, T / hop_length]: The magnitude spectrogram
-        """
-        mag_spectrum, _ = librosa.core.spectrum._spectrogram(self.waveform, n_fft=n_fft, hop_length=hop_length)
-        return mag_spectrum
+    @property
+    def filename(self):
+        """Properties written in this way prevent users to assign to self.filename"""
+        return self._filename
+
+    @property
+    def class_type(self):
+        """Properties written in this way prevent users to assign to self.class_type"""
+        return self._class_type
+
+    @property
+    def duration(self):
+        """Properties written in this way prevent users to assign to self.duration"""
+        return self._duration
+
+    @property
+    def path(self):
+        """Properties written in this way prevent users to assign to self.path"""
+        return self._path

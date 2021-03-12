@@ -1,1 +1,1 @@
-from .gui import plot_audio
+from .gui import plot_audio, plot_spectrum,plot_librosa_spectrum,plot_odf,plot_fft

@@ -1,1 +1,1 @@
-from .evaluation import test_activity_detection, test_classifier
+from .evaluation import evaluate_system

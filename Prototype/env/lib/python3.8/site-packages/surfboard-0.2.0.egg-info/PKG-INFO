@@ -1,0 +1,21 @@
+Metadata-Version: 1.1
+Name: surfboard
+Version: 0.2.0
+Summary: Novoic's audio feature extraction library https://novoic.com
+Home-page: http://github.com/novoic/surfboard
+Author: Raphael Lenain
+Author-email: raphael@novoic.com
+License: GPL-3.0
+Download-URL: https://github.com/novoic/surfboard/archive/v0.2.0.tar.gz
+Description: UNKNOWN
+Keywords: feature-extraction,audio,machine-learning,audio-processing,python,speech-processing,healthcare,signal-processing,alzheimers-disease,parkinsons-disease
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7

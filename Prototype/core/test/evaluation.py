@@ -1,20 +1,12 @@
 from interfaces import pre_processing, activity_detection, feature_extraction, classificator
 from sklearn.metrics import f1_score
 
-"""
-Identify and implement the evaluation metrics for the experimental validation.
-TODO:
-    - Tests to prove the most effective detection function
-    - Tests to prove the best classifier
-"""
 
-def test_activity_detection():
+def evaluate_system(groundtruth,predicted):
     """
-    Tests to prove the most effective detection function
+    Tests to prove the system
+    Precision
+    Recall
+    F-Score
     """
-
-def test_classifier():
-    """
-    Tests to prove the classifier
-    """
-
+    f1_score(groundtruth, predicted, average='macro')
