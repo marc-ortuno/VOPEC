@@ -1,7 +1,7 @@
 import numpy as np
+import librosa.feature as feature
 
-
-def feature_extraction(signal):
+def feature_extraction(signal,samp_freq,n_mfcc):
     """
     Feature extraction interface
     :param signal: Signal
@@ -9,10 +9,5 @@ def feature_extraction(signal):
     
     Features are extracted from the incoming audio signal when an onset is detected.
     """
-    features = []
-    for sample in signal:
-        if sample > 0.1:
-            features.append(1)
-        else:
-            features.append(0)
+    features = feature.mfcc(y=signal,sr=samp_freq,n_mfcc=n_mfcc)
     return features   

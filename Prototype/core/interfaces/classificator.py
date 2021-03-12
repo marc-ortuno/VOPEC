@@ -7,5 +7,6 @@ def classificator(features):
     :param features: Array of features
     :output class_tag: Int
     """
+    print(len(features))
     class_tag = 1
     return class_tag   

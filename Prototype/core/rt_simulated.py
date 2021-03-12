@@ -35,6 +35,7 @@ def init():
     global features
     global last_onset 
     global hfc
+    global n_mfcc
 
     data = get_dataset(sound="Kick",microphone="2") 
     groundtruth = []
@@ -45,6 +46,8 @@ def init():
     features = []
     last_onset = False
     hfc = []
+
+    n_mfcc = 20
 
     return
 
@@ -57,6 +60,7 @@ def process(input_buffer, output_buffer, buffer_len):
     global features
     global n_fft
     global hop_size
+    global n_mfcc
 
     n_signal = pre_processing(input_buffer,samp_freq)
 
@@ -67,14 +71,15 @@ def process(input_buffer, output_buffer, buffer_len):
     if onset:
         # print("onset")
         onset_location.extend(np.ones(buffer_len))
-        w_features = feature_extraction(n_signal)
-        features.append(w_features)
+        w_features = feature_extraction(n_signal,samp_freq,n_mfcc)
+        features.extend(w_features)
     else:
         onset_location.extend(np.zeros(buffer_len))
 
     #Offset detected
     if last_onset is True and onset is False:
         predicted.append(classificator(features))
+        features = []
     
     last_onset = onset
 
