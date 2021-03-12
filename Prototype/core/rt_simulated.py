@@ -36,6 +36,7 @@ def init():
     global last_onset 
     global hfc
     global n_mfcc
+    global active_signal
 
     data = get_dataset(sound="Kick",microphone="2") 
     groundtruth = []
@@ -47,7 +48,8 @@ def init():
     last_onset = False
     hfc = []
 
-    n_mfcc = 20
+    active_signal = []
+    n_mfcc = 40
 
     return
 
@@ -61,6 +63,7 @@ def process(input_buffer, output_buffer, buffer_len):
     global n_fft
     global hop_size
     global n_mfcc
+    global active_signal
 
     n_signal = pre_processing(input_buffer,samp_freq)
 
@@ -69,17 +72,17 @@ def process(input_buffer, output_buffer, buffer_len):
 
     # Only calculated when the onset is detected
     if onset:
-        # print("onset")
-        onset_location.extend(np.ones(buffer_len))
-        w_features = feature_extraction(n_signal,samp_freq,n_mfcc)
-        features.extend(w_features)
+        active_signal.extend(input_buffer) # Until we get an offset, the active sound is stored for later do feature extraction and classification.
+        onset_location.extend(np.ones(buffer_len)) # Onset location for visual analysis
     else:
         onset_location.extend(np.zeros(buffer_len))
 
     #Offset detected
     if last_onset is True and onset is False:
+        features = feature_extraction(active_signal,samp_freq,n_mfcc)
         predicted.append(classificator(features))
         features = []
+        active_signal = [] # clean active signal buffer
     
     last_onset = onset
 

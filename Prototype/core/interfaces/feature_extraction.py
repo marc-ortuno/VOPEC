@@ -9,5 +9,6 @@ def feature_extraction(signal,samp_freq,n_mfcc):
     
     Features are extracted from the incoming audio signal when an onset is detected.
     """
+    signal = np.array(signal)
     features = feature.mfcc(y=signal,sr=samp_freq,n_mfcc=n_mfcc)
     return features   
