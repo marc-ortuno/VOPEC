@@ -21,16 +21,16 @@ def pre_processing(signal,fs):
     PSD = fhat*np.conj(fhat)/n # Power Spectrum
 
     #Use the PSD to filter noise
-    indices = PSD > 0.03
-    PSDclean = PSD * indices
-    fhat = indices * fhat
-    denoised_signal = np.fft.ifft(fhat)
+    # indices = PSD > 0.02
+    # PSDclean = PSD * indices
+    # fhat = indices * fhat
+    # denoised_signal = np.fft.ifft(fhat)
 
     # plot_fft(signal,denoised_signal,fs,PSD,PSDclean,n)
     
     #High Pass Filter
     hp_filter = scipy_signal.butter(10, 500, 'hp', fs=fs,output='sos')
-    filtered_signal = scipy_signal.sosfilt(hp_filter, np.abs(denoised_signal))
+    filtered_signal = scipy_signal.sosfilt(hp_filter, np.abs(signal))
     
     
     return filtered_signal   

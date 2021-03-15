@@ -1,14 +1,27 @@
 import numpy as np
 from models import Waveform
 from dataset import get_dataset
-from interfaces import pre_processing, activity_detection, feature_extraction, classificator
+from interfaces import pre_processing, activity_detection, feature_extraction, classificator, train_model
 from utils import plot_audio, plot_spectrum, plot_odf,plot_librosa_spectrum,plot_fft
+from sklearn.metrics import classification_report
+import pickle 
+
 
 # parameters
 buffer_len = 512
 
+#Pre train k-NN
+# data = get_dataset()
+# knn_model = train_model(data)
+
+# save the model to disk
+filename = 'finalized_model.sav'
+# pickle.dump(knn_model, open(filename, 'wb'))
+
+knn_model = pickle.load(open(filename, 'rb'))
+
 # test signal
-audio = Waveform(path="./data/AFRP2.wav")
+audio = Waveform(path="./data/Snare1_AZiP2.wav")
 signal = audio.waveform
 samp_freq = audio.sample_rate
 duration = audio.duration
@@ -80,7 +93,7 @@ def process(input_buffer, output_buffer, buffer_len):
     #Offset detected
     if last_onset is True and onset is False:
         features = feature_extraction(active_signal,samp_freq,n_mfcc)
-        predicted.append(classificator(features))
+        predicted.append(classificator(features,knn_model))
         features = []
         active_signal = [] # clean active signal buffer
     
@@ -103,3 +116,4 @@ for k in range(n_buffers):
 
 plot_audio(signal,signal_proc,samp_freq)
 plot_odf(signal_proc,samp_freq,onset_location)
+print(predicted)
