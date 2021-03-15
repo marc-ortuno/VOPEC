@@ -2,6 +2,8 @@ from matplotlib import pyplot as plt
 import numpy as np
 import librosa
 import librosa.display
+import pandas as pd
+import seaborn as sn
 
 """
 Comparative plot of original signal and processed signal
@@ -77,6 +79,9 @@ def plot_odf(signal,sr,onsets):
     
     plt.show()
 
+"""
+Plot De-noising fft comparative
+"""
 def plot_fft(signal,denoised_signal,sr,PSD,PSDClean,n):
     dt  = 0.001
     t  = np.arange(signal.size)/ sr
@@ -97,3 +102,23 @@ def plot_fft(signal,denoised_signal,sr,PSD,PSDClean,n):
     plt.xlim(fftfreq[L[0]],fftfreq[L[-1]])
     plt.legend()
     plt.show()
+
+"""
+Plot evaluation report (f-score, recall, precision)
+"""
+def plot_evaluation_report(report):
+        df = pd.DataFrame(report).T
+        df['support'] = df.support.apply(int)
+        sn.heatmap(df, annot=True, annot_kws={"size": 16}) # font size
+        plt.show()
+
+"""
+Plot confusion matrix
+"""
+def plot_confusion_matrix(cm):
+        df_cm = pd.DataFrame(cm, ["Kick","HH","Snare"], ["Kick","HH","Snare"])
+        # plt.figure(figsize=(10,7))
+        sn.set(font_scale=1.4) # for label size
+        sn.heatmap(df_cm, annot=True, annot_kws={"size": 16}) # font size
+        plt.show()
+
