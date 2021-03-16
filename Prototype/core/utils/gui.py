@@ -122,3 +122,15 @@ def plot_confusion_matrix(cm):
         sn.heatmap(df_cm, annot=True, annot_kws={"size": 16}) # font size
         plt.show()
 
+"""
+Plot dataset statistics
+"""
+def plot_dataset_statistics(class_type,data):
+    data = np.transpose(np.array(data))
+    class_type.append("Total")
+    collabel=("Nº Sounds", "Total duration (s)", "Average duration (s)")
+    rowlabel= class_type
+    plt.axis('off')
+    the_table = plt.table(cellText=data,colLabels=collabel,rowLabels=rowlabel,loc='center')
+
+    plt.show()

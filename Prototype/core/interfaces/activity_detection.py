@@ -33,6 +33,7 @@ def activity_detection(signal,sample_rate,n_fft,hop_size):
     return flag  
 
 
+
 # Onset Detection Functions
 def hfc(fft):
 

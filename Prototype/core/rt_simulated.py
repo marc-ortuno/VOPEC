@@ -1,6 +1,6 @@
 import numpy as np
 from models import Waveform
-from dataset import get_dataset
+from dataset import get_dataset, dataset_analyzer
 from interfaces import pre_processing, activity_detection, feature_extraction, classificator, train_model
 from utils import plot_audio, plot_spectrum, plot_odf,plot_librosa_spectrum,plot_fft,plot_confusion_matrix,plot_evaluation_report
 from test import evaluate_system
@@ -12,7 +12,9 @@ import pickle
 buffer_len = 512
 
 #Pre train k-NN
-# data = get_dataset()
+data = get_dataset()
+dataset_analyzer(data)
+# exit()
 # knn_model = train_model(data)
 
 # save the model to disk
@@ -96,7 +98,7 @@ def process(input_buffer, output_buffer, buffer_len):
         features = feature_extraction(active_signal,samp_freq,n_mfcc)
         predicted.append(classificator(features,knn_model))
         features = []
-        active_signal = [] # clean active signal buffer
+        active_signal = [] #Clean active signal buffer
     
     last_onset = onset
 
