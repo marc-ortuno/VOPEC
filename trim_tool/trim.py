@@ -14,17 +14,14 @@ def read_csv(url):
     return content 
 
   
-def trim_audio(url,folder,csv_file,f):
+def trim_audio(url,folder,csv_file,f,file_name):
     original_audio = AudioSegment.from_wav(url)    
-    file_name = f.split('.')[0] 
-    for i in range(0,len(csv_file)):
+    print(file_name)
+    for i in range(0,len(csv_file),2):
         index = 1 
-        if (i+1) >= len(csv_file):
-            t1 = float(csv_file[i][0])
-            t2 = original_audio.duration_seconds
-        else:
-            t1 = float(csv_file[i][0])
-            t2 = float(csv_file[i+1][0]) 
+
+        t1 = float(csv_file[i][0])
+        t2 = float(csv_file[i+1][0]) 
         
         t1 = t1 * 1000 #Works in milliseconds
         t2 = t2 * 1000
@@ -42,12 +39,14 @@ def trim_files(startpath):
     for root, dirs, files in os.walk(startpath):
         folder = '/' + os.path.basename(root) + '/'
         csv_output = []
+        #TODO: Optimize parsing csv and its wav (currently double for...)
         for f in files:
             if f.endswith('.csv'):
-                print(folder)
                 csv_output = read_csv(startpath+folder+f)
-            if f.endswith('.wav'):
-                trim_audio(startpath+folder+f,'Dataset',csv_output,f)
+                file_name = f.split('.')[0]
+                for w in files:
+                    if w.endswith('.wav') and w.startswith(file_name):
+                        trim_audio(startpath+folder+w,'Dataset',csv_output,w,file_name)
      
      
-trim_files('../RawDataset/WAV+Annotation')    
+trim_files('../Dataset')    
