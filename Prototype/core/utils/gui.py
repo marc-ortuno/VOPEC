@@ -4,6 +4,7 @@ import librosa
 import librosa.display
 import pandas as pd
 import seaborn as sn
+from scipy.interpolate import make_interp_spline, BSpline
 
 """
 Comparative plot of original signal and processed signal
@@ -61,19 +62,35 @@ def plot_librosa_spectrum(signal_stft):
 """
 Plot ODF function
 """
-def plot_odf(signal,sr,onsets):
-    e_time = np.arange(signal.size)/ sr
-    o_time = np.arange(len(onsets))/ sr
+def plot_odf(name,signal,signal_proc,sr,onsets,hfc):
+    so_time = np.arange(signal.size)/ sr
+    sp_time = np.arange(signal_proc.size)/ sr
+    onsets_time = np.arange(len(onsets))/ sr
+    hfc_time = np.arange(len(hfc))/ sr
     
     plt.figure(1)
-    plot_a = plt.subplot(211)
-    plot_a.set_title("Onsets")
-    plot_a.plot(e_time,signal,color="k")
+    plot_a = plt.subplot(411)
+    plot_a.set_title(name)
+    plot_a.plot(so_time,signal,color="k")
+    plot_a.set_xlabel('Time')
+    plot_a.set_ylabel('Energy')
+
+    plot_a = plt.subplot(412)
+    plot_a.plot(sp_time,signal_proc,color="y")
     plot_a.set_xlabel('Time')
     plot_a.set_ylabel('Energy')
     
-    plot_c= plt.subplot(212)
-    plot_c.plot(o_time,onsets,color="r")
+    plot_c= plt.subplot(413)
+    x_new = np.linspace(hfc_time.min(),hfc_time.max(),300)
+    spl = make_interp_spline(hfc_time, hfc, k=3)  # type: BSpline
+    hfc_smooth = spl(x_new)
+    # plot_c.plot(x_new,hfc_smooth,color="b")
+    plot_c.plot(hfc_time,hfc,color="b")
+    plot_c.set_xlabel('Time')
+    plot_c.set_ylabel('HFC')
+
+    plot_c= plt.subplot(414)
+    plot_c.plot(onsets_time,onsets,color="r")
     plot_c.set_xlabel('Time')
     plot_c.set_ylabel('Onset')
     

@@ -18,19 +18,19 @@ def activity_detection(signal,sample_rate,n_fft,hop_size):
 
     #Compute FFT and HFCv2
     signal_fft = np.fft.fft(signal,signal.size)
-    signal_hfcv2 = hfc(signal_fft)
+    signal_hfc = hfc(signal_fft)
     # print(signal_hfcv2)
 
 
     #Peak Picking -> Static threshold
-    th = 15000
+    th = 30000
 
-    if th < signal_hfcv2:
+    if th < signal_hfc:
         flag = True
     else:
         flag = False
 
-    return flag  
+    return flag, signal_hfc
 
 
 
