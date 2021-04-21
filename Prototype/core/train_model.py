@@ -15,13 +15,19 @@ def train_model(data):
     X = []
     Y = []
 
-    for sound in data:
-        features = (main(sound,[]))
-        X.append(features)
-        Y.append(sound.class_type)
+    for audio in data:
+        #Signal details
+        signal = audio.waveform
+        samp_freq = audio.sample_rate
+        buffer_len = 512
+        n_buffers = len(signal)//buffer_len
 
-    X = np.array(X)
-    Y = np.array(Y)
+        _, _, _, _, features = main(signal,samp_freq,n_buffers,buffer_len,classificator_by_pass=True)
+        X.append(features)
+        Y.append(audio.class_type)
+
+    # X = np.array(X)
+    # Y = np.array(Y)
     x_train, x_test, y_train, y_test = train_test_split(X,Y)
     
     knn_classifier = KNeighborsClassifier()

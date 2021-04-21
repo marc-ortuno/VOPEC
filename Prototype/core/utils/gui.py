@@ -151,3 +151,43 @@ def plot_dataset_statistics(class_type,data):
     the_table = plt.table(cellText=data,colLabels=collabel,rowLabels=rowlabel,loc='center')
 
     plt.show()
+
+
+"""
+Plot activity detection groundtruth vs predicted
+"""
+def plot_ad_evaluation(signal,groundtruth,predicted,sr):
+
+    #If signal size is higher than 3s plot only first 3s for better analisys
+    if signal.size > 130000:
+        custom_time = np.arange(130000)/ sr
+        signal_time = custom_time
+        groundtruth_time = custom_time
+        predicted_time = custom_time
+        signal_size = 130000
+        groundtruth_size = 130000
+        predicted_size = 130000
+    else:
+        signal_size = signal.size
+        groundtruth_size = len(groundtruth)
+        predicted_size = len(predicted)
+        signal_time = np.arange(signal_size)/ sr
+        groundtruth_time = np.arange(groundtruth_size)/ sr
+        predicted_time = np.arange(predicted_size)/ sr
+
+
+    _, ax = plt.subplots(figsize=(12, 6))
+    ax.set_title("Activity detection (groundtruth vs predicted)")
+    ax.plot(signal_time,abs(signal[0:signal_size]),color="b",label="signal",alpha=0.2)
+    ax.legend()
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Energy')
+
+    ax.plot(groundtruth_time,groundtruth[0:groundtruth_size],color="k",label="groundtruth")
+    ax.legend()
+
+
+    ax.plot(predicted_time,predicted[0:predicted_size],color="r",label="predicted")
+    ax.legend()
+
+    plt.show()
