@@ -29,7 +29,7 @@ def pre_processing(signal,fs):
     PSD = fhat*np.conj(fhat)/n # Power Spectrum
 
     #Use the PSD to filter noise
-    indices = PSD > 0.02
+    indices = PSD > 0.01
     PSDclean = PSD * indices
     fhat = indices * fhat
     denoised_signal = np.fft.ifft(fhat)

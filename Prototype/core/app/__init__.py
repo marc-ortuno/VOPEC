@@ -1,1 +1,1 @@
-from .rt_simulated import main,init,process
+from .rt_simulated import main,init,process,init_activity_detection,init_classificator,init_feature_extraction,init_pre_processing

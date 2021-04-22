@@ -1,5 +1,5 @@
 from evaluate import evaluate_activity_detection
-from app import main
+from app import main,init_activity_detection,init_classificator,init_feature_extraction,init_pre_processing
 from models import Waveform
 from utils import load_groundtruth,load_annotation,read_csv, plot_boxplot
 import numpy as np 
@@ -52,7 +52,11 @@ def run_test():
                     n_buffers = len(signal)//buffer_len
 
                     #run simulation
-                    _, predicted_activity, _, _, _ = main(signal,samp_freq,n_buffers,buffer_len,feature_extraction_by_pass=True)
+                    init_pre_processing()
+                    init_activity_detection()
+                    init_feature_extraction()
+                    init_classificator(by_pass=True)
+                    predicted_activity= main(signal,samp_freq,n_buffers,buffer_len)[2]
 
                     #Init groundtruth activity array
                     groundtruth_activity = np.zeros(len(predicted_activity))
@@ -91,5 +95,5 @@ def generate_plots():
 
 
 
-#run_test()
-generate_plots()
+run_test()
+#generate_plots()

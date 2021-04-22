@@ -5,8 +5,55 @@ from interfaces import pre_processing, activity_detection, feature_extraction, c
 from sklearn.metrics import classification_report
 
 
-# state variables
-def init(signal,sr,n_buffers, knn_model, b_len,pp_by_pass, ad_by_pass,fe_by_pass,c_by_pass):
+def init_pre_processing(by_pass = False):
+    global pre_processing_by_pass
+    pre_processing_by_pass = by_pass
+
+def init_activity_detection(func_type = '1', by_pass = False):
+
+    #Activity detection variables
+    global onset_location
+    global last_onset
+    global hfc
+    global activity_detection_type #Function name
+    global activiy_detection_by_pass
+
+
+    onset_location = []
+    last_onset = False
+    hfc = 0
+    activity_detection_type = func_type
+
+    activiy_detection_by_pass = by_pass
+
+def init_feature_extraction(n_mfcc_arg = 20, by_pass = False):
+    #Feature extraction variables
+    global active_signal
+    global features
+    global n_mfcc
+    global feature_extraction_by_pass
+
+    active_signal = []
+    features = []
+    n_mfcc = n_mfcc_arg
+    feature_extraction_by_pass = by_pass
+
+
+
+
+def init_classificator(knn_model = [], by_pass = False):
+    #Classificator Variables
+    global model
+    global predicted
+    global classificator_by_pass
+
+    model = knn_model
+    predicted = []
+    classificator_by_pass = by_pass
+
+
+# Init audio process variables
+def init(signal,sr,n_buffers,b_len):
 
     # declare variables used in `process`
     #Audio details
@@ -17,46 +64,6 @@ def init(signal,sr,n_buffers, knn_model, b_len,pp_by_pass, ad_by_pass,fe_by_pass
     samp_freq = sr
     buffer_len = b_len
     audio_size = len(signal)
-
-
-    #Activity detection variables
-    global onset_location
-    global n_fft
-    global hop_size
-    global last_onset
-    global hfc
-
-    onset_location = []
-    n_fft = 256
-    hop_size = 64
-    last_onset = False
-    hfc = 0
-
-    #Feature extraction variables
-    global active_signal
-    global features
-    global n_mfcc
-
-    active_signal = []
-    features = []
-    n_mfcc = 20
-
-    #Classificator Variables
-    global model
-    global predicted
-
-    model = knn_model
-    predicted = []
-
-    #Bypass
-    global pre_processing_by_pass
-    global activiy_detection_by_pass
-    global feature_extraction_by_pass
-    global classificator_by_pass
-    pre_processing_by_pass = pp_by_pass
-    activiy_detection_by_pass = ad_by_pass
-    feature_extraction_by_pass = fe_by_pass
-    classificator_by_pass = c_by_pass
 
 
 # the process function!
@@ -75,7 +82,7 @@ def process(input_buffer, output_buffer):
         if not activiy_detection_by_pass:
             
             #Activity Detection Block
-            onset, hfc = activity_detection(n_signal,samp_freq,n_fft,hop_size)
+            onset, hfc = activity_detection(activity_detection_type,n_signal,samp_freq)
 
             # Update buffer containing the active signal while is an onset
             if onset:
@@ -100,14 +107,12 @@ def process(input_buffer, output_buffer):
             
             last_onset = onset
 
-
     return n_signal, features, hfc, predicted, onset_location
     
-def main(signal,samp_freq,n_buffers, buffer_len = 512, knn_model = [],
-            pre_processing_by_pass = False, activiy_detection_by_pass = False ,feature_extraction_by_pass = False,classificator_by_pass = False):
+def main(signal,samp_freq,n_buffers, buffer_len = 512):
     
     #Init process variables
-    init(signal,samp_freq,n_buffers, knn_model, buffer_len,pre_processing_by_pass, activiy_detection_by_pass,feature_extraction_by_pass,classificator_by_pass)
+    init(signal,samp_freq,n_buffers, buffer_len)
     
     data_type = signal.dtype
     # allocate input and output buffers

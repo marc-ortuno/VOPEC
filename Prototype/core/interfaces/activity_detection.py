@@ -5,14 +5,18 @@ import scipy
 import scipy.signal as sc
 import madmom
 
-def activity_detection(signal,sample_rate,n_fft,hop_size):
+def activity_detection(func_type,signal,sample_rate):
+    return {
+        '1': lambda: activity_detection_1(signal,sample_rate),
+    }[func_type]()
+    
+def activity_detection_1(signal,sample_rate):
     """
     Activity-Detection interface
     :param signal: Signal
     :param sample_rate: Int
-    :param n_fft: Int
-    :param hop_size: Int
-    :output flag: Boolean
+    :output flag: Boolean (onset/offset)
+    :output signal_hfc: High Frequency Content Function
     """
     flag = False
 
