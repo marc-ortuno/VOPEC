@@ -43,11 +43,16 @@ def run_test():
 
                     #Load audio and its annotation
                     audio = Waveform(path=wav_dir)
-                    groundtruth = load_groundtruth(csv_dir)
                     groundtruth_annotation = load_annotation(csv_dir)
 
+                    #Signal details
+                    signal = audio.waveform
+                    samp_freq = audio.sample_rate
+                    buffer_len = 512
+                    n_buffers = len(signal)//buffer_len
+
                     #run simulation
-                    predicted_activity = main(audio,groundtruth)
+                    _, predicted_activity, _, _, _ = main(signal,samp_freq,n_buffers,buffer_len,feature_extraction_by_pass=True)
 
                     #Init groundtruth activity array
                     groundtruth_activity = np.zeros(len(predicted_activity))
@@ -86,4 +91,5 @@ def generate_plots():
 
 
 
+#run_test()
 generate_plots()
