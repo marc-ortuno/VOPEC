@@ -148,7 +148,7 @@ def plot_dataset_statistics(class_type,data):
     collabel=("Nº Sounds", "Total duration (s)", "Average duration (s)")
     rowlabel= class_type
     plt.axis('off')
-    the_table = plt.table(cellText=data,colLabels=collabel,rowLabels=rowlabel,loc='center')
+    plt.table(cellText=data,colLabels=collabel,rowLabels=rowlabel,loc='center')
 
     plt.show()
 
@@ -190,4 +190,13 @@ def plot_ad_evaluation(signal,groundtruth,predicted,sr):
     ax.plot(predicted_time,predicted[0:predicted_size],color="r",label="predicted")
     ax.legend()
 
+    plt.show()
+
+def plot_boxplot(precision,recall,f1_score,accuracy):
+    data = [precision,recall,f1_score,accuracy]
+    x = ["Precision","Recall","F1-score","Accuracy"]
+    sn.set_theme(style="whitegrid")
+    sn.boxplot(data=data)
+    sn.swarmplot(data=data, size=6, edgecolor="black", linewidth=.9)
+    plt.xticks(plt.xticks()[0], x)
     plt.show()
