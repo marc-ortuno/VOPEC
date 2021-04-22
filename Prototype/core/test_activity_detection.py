@@ -56,7 +56,7 @@ def run_test():
                     init_activity_detection()
                     init_feature_extraction()
                     init_classificator(by_pass=True)
-                    predicted_activity= main(signal,samp_freq,n_buffers,buffer_len)[2]
+                    predicted_activity= main(signal,samp_freq,n_buffers,buffer_len)[1]
 
                     #Init groundtruth activity array
                     groundtruth_activity = np.zeros(len(predicted_activity))
