@@ -9,7 +9,7 @@ def init_pre_processing(by_pass = False):
     global pre_processing_by_pass
     pre_processing_by_pass = by_pass
 
-def init_activity_detection(func_type = '1', by_pass = False):
+def init_activity_detection(func_type = 1, by_pass = False):
 
     #Activity detection variables
     global onset_location
@@ -17,13 +17,14 @@ def init_activity_detection(func_type = '1', by_pass = False):
     global hfc
     global activity_detection_type #Function name
     global activiy_detection_by_pass
+    global previous_hfc
 
 
     onset_location = []
     last_onset = False
     hfc = 0
+    previous_hfc = []
     activity_detection_type = func_type
-
     activiy_detection_by_pass = by_pass
 
 def init_feature_extraction(n_mfcc_arg = 20, by_pass = False):
@@ -38,9 +39,6 @@ def init_feature_extraction(n_mfcc_arg = 20, by_pass = False):
     n_mfcc = n_mfcc_arg
     feature_extraction_by_pass = by_pass
 
-
-
-
 def init_classificator(knn_model = [], by_pass = False):
     #Classificator Variables
     global model
@@ -51,7 +49,6 @@ def init_classificator(knn_model = [], by_pass = False):
     predicted = []
     classificator_by_pass = by_pass
 
-
 # Init audio process variables
 def init(signal,sr,n_buffers,b_len):
 
@@ -60,10 +57,12 @@ def init(signal,sr,n_buffers,b_len):
     global samp_freq
     global buffer_len
     global audio_size
+    global onset_timeout
 
     samp_freq = sr
     buffer_len = b_len
     audio_size = len(signal)
+    onset_timeout = 10
 
 
 # the process function!
@@ -71,9 +70,9 @@ def process(input_buffer, output_buffer):
 
     global last_onset
     global active_signal
+    global onset_timeout
 
     features = []
-
     if not pre_processing_by_pass:
 
         #Pre-Processing Block
@@ -82,17 +81,28 @@ def process(input_buffer, output_buffer):
         if not activiy_detection_by_pass:
             
             #Activity Detection Block
-            onset, hfc = activity_detection(activity_detection_type,n_signal,samp_freq)
+            onset, hfc, threshold = activity_detection(activity_detection_type,n_signal,samp_freq,buffer_len,previous_hfc)
+            previous_hfc.append(hfc)
 
-            # Update buffer containing the active signal while is an onset
+            # To prevent repeated reporting of an
+            # onset (and thus producing numerous false positive detections), an
+            # onset is only reported if no onsets have been detected in the previous three frames (30 ms aprox).
+            if last_onset is True and onset is False:
+                if onset_timeout > 0:
+                    onset = True
+                    onset_timeout -= 1
+                else:
+                    onset_timeout = 10
+
             if onset:
-                active_signal.extend(input_buffer) # Until we get an offset, the active sound is stored for later do feature extraction and classification.
-                onset_location.extend(np.ones(buffer_len)) # Onset location for visual analysis
+                active_signal.extend(input_buffer) # Until we get an offset, the active sound is stored for later do feature extraction an onset is False: classification.
+                onset_location.extend(np.ones(buffer_len)) # Onset location for visual analysis    
             else:
                 onset_location.extend(np.zeros(buffer_len))
+
             
             #Offset detected
-            if (last_onset is True and onset is False) or (len(active_signal) >= audio_size):
+            if (onset_timeout == 0):
                 
                 if not feature_extraction_by_pass:
                     
@@ -107,10 +117,15 @@ def process(input_buffer, output_buffer):
             
             last_onset = onset
 
-    return n_signal, features, hfc, predicted, onset_location
+    return n_signal, features, hfc, predicted, onset_location, threshold
     
-def main(signal,samp_freq,n_buffers, buffer_len = 512):
+def main(audio, buffer_len = 512):
     
+    #Signal details
+    signal = audio.waveform
+    samp_freq = audio.sample_rate
+    n_buffers = len(signal)//buffer_len
+
     #Init process variables
     init(signal,samp_freq,n_buffers, buffer_len)
     
@@ -122,6 +137,7 @@ def main(signal,samp_freq,n_buffers, buffer_len = 512):
     onset_location = []
     total_features = []
     total_hfc = []
+    total_th = []
     # simulate block based processing
     signal_proc = np.zeros(n_buffers*buffer_len, dtype=data_type)
     
@@ -129,12 +145,22 @@ def main(signal,samp_freq,n_buffers, buffer_len = 512):
 
         # index the appropriate samples
         input_buffer = signal[k*buffer_len:(k+1)*buffer_len]
-        output_buffer, features, hfc, predicted, onset_location = process(input_buffer, output_buffer)
+        output_buffer, features, hfc, predicted, onset_location, threshold = process(input_buffer, output_buffer)
         signal_proc[k*buffer_len:(k+1)*buffer_len] = output_buffer
         total_features.extend(features)
-        total_hfc.extend([hfc]*output_buffer.size)
 
-    return signal_proc, onset_location, total_hfc, predicted, features
+        if type(hfc) is np.ndarray:
+            total_hfc.extend(hfc)
+        else:
+            total_hfc.extend([hfc]*output_buffer.size)
+
+        if type(threshold) is np.ndarray:
+            total_th.extend(threshold)
+        else:
+            total_th.extend([threshold]*output_buffer.size)
+
+    #return in a dictionary
+    return {'SIGNAL_PROCESSED':signal_proc, 'ONSET_LOCATIONS':onset_location, 'HFC':total_hfc, 'THRESHOLD':total_th, 'PREDICTION':predicted, 'FEATURES':features}
 
 
 

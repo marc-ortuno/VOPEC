@@ -9,29 +9,26 @@ import pickle
 filename = './app/finalized_model.sav'
 knn_model = pickle.load(open(filename, 'rb'))
 
-audio = Waveform(path="./data/Freestyle_JMP.wav")
-groundtruth = load_groundtruth('./data/Freestyle_JMP.csv')
+path = '../../RawDataset/ND_1617474893180/HH_ND'
 
-#Signal details
-signal = audio.waveform
-samp_freq = audio.sample_rate
-name = audio.filename
-buffer_len = 512
-n_buffers = len(signal)//buffer_len
+audio = Waveform(path=path+".wav")
+groundtruth = load_groundtruth(path+".csv")
+
 
 #Init system
 init_pre_processing()
-init_activity_detection()
-init_feature_extraction()
+init_activity_detection(func_type=2)
+init_feature_extraction(by_pass=True)
 init_classificator(knn_model = knn_model, by_pass=True)
+buffer_len = 512
 
 #Call system
-signal_proc, onset_location, total_hfc, predicted = main(signal,samp_freq,n_buffers,buffer_len)[0:4]
+result = main(audio,buffer_len)
 
 #Plot results
-plot_audio(signal,signal_proc,samp_freq)
-plot_odf(name,signal,signal_proc,samp_freq,onset_location,total_hfc)
-report, cm = evaluate_system(groundtruth,predicted)
+plot_audio(audio.waveform,result['SIGNAL_PROCESSED'],audio.sample_rate)
+plot_odf(audio.filename,audio.waveform,result['SIGNAL_PROCESSED'],audio.sample_rate,result['ONSET_LOCATIONS'],result['HFC'],result['THRESHOLD'])
+report, cm = evaluate_system(groundtruth,result['PREDICTION'])
 
 #EVALUATION METRICS PLOTS
 plot_evaluation_report(report)

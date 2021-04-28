@@ -21,7 +21,9 @@ def plot_audio(wave_file,processed_file,sr):
     plt.legend()
 
     plt.sca(axs[1])
-    plt.specgram(wave_file, NFFT=1024, Fs=sr, noverlap=900)
+    vmin = 20*np.log10(np.max(wave_file)) - 100  # hide anything below -40 dBc
+    plt.specgram(wave_file, NFFT=1024, Fs=sr, noverlap=900,vmin=vmin,vmax=-40)
+    
     plt.xlabel('Time')
     plt.ylabel('Frequency')
 
@@ -31,7 +33,8 @@ def plot_audio(wave_file,processed_file,sr):
     plt.legend()
     
     plt.sca(axs[3])
-    plt.specgram(processed_file, NFFT=1024, Fs=sr, noverlap=900)
+    vmin_processed_file = 20*np.log10(np.max(processed_file)) - 100  # hide anything below -40 dBc
+    plt.specgram(processed_file, NFFT=1024, Fs=sr, noverlap=900,vmin=vmin_processed_file,vmax=-40)
     plt.xlabel('Time')
     plt.ylabel('Frequency')
 
@@ -62,38 +65,40 @@ def plot_librosa_spectrum(signal_stft):
 """
 Plot ODF function
 """
-def plot_odf(name,signal,signal_proc,sr,onsets,hfc):
+def plot_odf(name,signal,signal_proc,sr,onsets,hfc,th):
+
     so_time = np.arange(signal.size)/ sr
     sp_time = np.arange(signal_proc.size)/ sr
     onsets_time = np.arange(len(onsets))/ sr
     hfc_time = np.arange(len(hfc))/ sr
+    th_time = np.arange(len(th))/ sr
     
     plt.figure(1)
-    plot_a = plt.subplot(411)
+    plot_a = plt.subplot(311)
     plot_a.set_title(name)
     plot_a.plot(so_time,signal,color="k")
     plot_a.set_xlabel('Time')
     plot_a.set_ylabel('Energy')
 
-    plot_a = plt.subplot(412)
-    plot_a.plot(sp_time,signal_proc,color="y")
-    plot_a.set_xlabel('Time')
-    plot_a.set_ylabel('Energy')
-    
-    plot_c= plt.subplot(413)
-    x_new = np.linspace(hfc_time.min(),hfc_time.max(),300)
-    spl = make_interp_spline(hfc_time, hfc, k=3)  # type: BSpline
-    hfc_smooth = spl(x_new)
+  
+    plot_c= plt.subplot(312)
+    #Smooth
+    # x_new = np.linspace(hfc_time.min(),hfc_time.max(),300)
+    # spl = make_interp_spline(hfc_time, hfc, k=3)  # type: BSpline
+    # hfc_smooth = spl(x_new)
     # plot_c.plot(x_new,hfc_smooth,color="b")
+
     plot_c.plot(hfc_time,hfc,color="b")
+    plot_c.plot(th_time,th,color="r")
     plot_c.set_xlabel('Time')
     plot_c.set_ylabel('HFC')
-
-    plot_c= plt.subplot(414)
-    plot_c.plot(onsets_time,onsets,color="r")
-    plot_c.set_xlabel('Time')
-    plot_c.set_ylabel('Onset')
     
+    plot_d= plt.subplot(313)
+    plot_d.plot(onsets_time,onsets,color="r")
+    plot_d.set_xlabel('Time')
+    plot_d.set_ylabel('Onset')
+    
+    plt.subplots_adjust(hspace=0.5)
     plt.show()
 
 """

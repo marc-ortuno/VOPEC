@@ -28,7 +28,7 @@ def evaluate_activity_detection(signal,groundtruth,predicted,sr):
     Evaluate activity detection
     
     '''
-        
+    
     #Metrics
     TP = 0
     TN = 0
@@ -44,7 +44,7 @@ def evaluate_activity_detection(signal,groundtruth,predicted,sr):
         elif groundtruth[index] != predicted[index] and predicted[index] == 1:
             FP += 1 
 
-    if TP == 0 or FP == 0 or FN == 0 or TN == 0:
+    if (TP == 0 and FP == 0) or (TP ==0 and FN == 0):
         precision = 0
         recall = 0
         f1_score = 0
@@ -54,7 +54,8 @@ def evaluate_activity_detection(signal,groundtruth,predicted,sr):
         recall = TP / (TP + FN)
         f1_score = 2 * ((precision * recall) / (precision + recall))
         accuracy = (TP + TN)/(TP + TN + FP + FN)
-    
+              
+
     # print("Precision " + str(precision))
     # print("Recall " + str(recall))
     # print("F1_score " + str(f1_score))

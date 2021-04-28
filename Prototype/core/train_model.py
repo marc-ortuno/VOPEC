@@ -43,8 +43,8 @@ def train_model(data):
 #Pre train k-NN
 data = get_dataset()
 dataset_analyzer(data)
-knn_model = train_model(data)
+# knn_model = train_model(data)
 
-# save the model to disk
-filename = 'finalized_model.sav'
-pickle.dump(knn_model, open(filename, 'wb'))
+# # save the model to disk
+# filename = 'finalized_model.sav'
+# pickle.dump(knn_model, open(filename, 'wb'))
