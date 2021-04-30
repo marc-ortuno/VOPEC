@@ -39,7 +39,7 @@ def pre_processing(signal,fs):
     indices = PSD > 0.001
     PSDclean = PSD * indices
     fhat = indices * fhat
-    denoised_signal = np.fft.ifft(fhat)
+    denoised_signal =np.fft.ifft(fhat)
     
 
     #Squaring the filtered signal to compute the energy.
@@ -54,4 +54,4 @@ def pre_processing(signal,fs):
 
 
     
-    return denoised_signal
+    return hp_filtered_signal.real

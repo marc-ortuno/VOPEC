@@ -50,19 +50,20 @@ def init_classificator(knn_model = [], by_pass = False):
     classificator_by_pass = by_pass
 
 # Init audio process variables
-def init(signal,sr,n_buffers,b_len):
+def init(sr,b_len):
 
     # declare variables used in `process`
     #Audio details
     global samp_freq
     global buffer_len
-    global audio_size
     global onset_timeout
+    global onset_duration
 
     samp_freq = sr
     buffer_len = b_len
-    audio_size = len(signal)
-    onset_timeout = 10
+    avg_duration = 0.120 #in seconds
+    onset_duration = int(avg_duration / (b_len / sr)) #150ms average duration of a class
+    onset_timeout = onset_duration
 
 
 # the process function!
@@ -92,7 +93,7 @@ def process(input_buffer, output_buffer):
                     onset = True
                     onset_timeout -= 1
                 else:
-                    onset_timeout = 10
+                    onset_timeout = onset_duration
 
             if onset:
                 active_signal.extend(input_buffer) # Until we get an offset, the active sound is stored for later do feature extraction an onset is False: classification.
@@ -100,10 +101,8 @@ def process(input_buffer, output_buffer):
             else:
                 onset_location.extend(np.zeros(buffer_len))
 
-            
             #Offset detected
             if (onset_timeout == 0):
-                
                 if not feature_extraction_by_pass:
                     
                     #Feature Extraction Block
@@ -117,6 +116,7 @@ def process(input_buffer, output_buffer):
             
             last_onset = onset
 
+
     return n_signal, features, hfc, predicted, onset_location, threshold
     
 def main(audio, buffer_len = 512):
@@ -127,7 +127,7 @@ def main(audio, buffer_len = 512):
     n_buffers = len(signal)//buffer_len
 
     #Init process variables
-    init(signal,samp_freq,n_buffers, buffer_len)
+    init(samp_freq, buffer_len)
     
     data_type = signal.dtype
     # allocate input and output buffers
@@ -146,7 +146,9 @@ def main(audio, buffer_len = 512):
         # index the appropriate samples
         input_buffer = signal[k*buffer_len:(k+1)*buffer_len]
         output_buffer, features, hfc, predicted, onset_location, threshold = process(input_buffer, output_buffer)
+
         signal_proc[k*buffer_len:(k+1)*buffer_len] = output_buffer
+
         total_features.extend(features)
 
         if type(hfc) is np.ndarray:

@@ -76,33 +76,35 @@ def all_dataset_test(buffer_size = 512):
                     csv_dir = startpath+folder+f.split('.')[0]+'.csv'
                     run_test(wav_dir,csv_dir,buffer_size,log_file)
 
-def generate_plots():
-    evaluation_csv = read_csv(tests_dir+'/activity_detection_log_512.csv')
-    precision = []
-    recall = []
-    f1_score = []
-    accuracy = []
+def generate_plots(buffer_sizes):
+    
+    for buffer_size in buffer_sizes:
+        evaluation_csv = read_csv(tests_dir+'/activity_detection_log_'+str(buffer_size)+'.csv')
+        precision = []
+        recall = []
+        f1_score = []
+        accuracy = []
 
-    for i in range(1,len(evaluation_csv),1):
-        precision.append(evaluation_csv[i][1])
-        recall.append(evaluation_csv[i][2])
-        f1_score.append(evaluation_csv[i][3])
-        accuracy.append(evaluation_csv[i][4])
+        for i in range(1,len(evaluation_csv),1):
+            precision.append(evaluation_csv[i][1])
+            recall.append(evaluation_csv[i][2])
+            f1_score.append(evaluation_csv[i][3])
+            accuracy.append(evaluation_csv[i][4])
 
-    plot_boxplot(precision,recall,f1_score,accuracy)
+        plot_boxplot(precision,recall,f1_score,accuracy,buffer_size)
 
 
-def buffer_size_test():
+def buffer_size_test(buffer_sizes):
 
-    buffer_sizes = [128, 256, 512, 1024, 2048, 4096]
 
     for buffer_size in buffer_sizes:
         all_dataset_test(buffer_size=buffer_size)
 
 
 
-# buffer_size_test()
-all_dataset_test()
-generate_plots()
-
+buffer_sizes = [128, 256, 512, 1024, 2048, 4096]
+# buffer_size_test(buffer_sizes)
+# all_dataset_test()
+generate_plots(buffer_sizes)
 # run_test('../../RawDataset/SOF/SofI2.wav,','../../RawDataset/SOF/SofI2.wav,',512)
+

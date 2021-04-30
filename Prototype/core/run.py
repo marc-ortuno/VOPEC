@@ -9,7 +9,7 @@ import pickle
 filename = './app/finalized_model.sav'
 knn_model = pickle.load(open(filename, 'rb'))
 
-path = '../../RawDataset/ND_1617474893180/HH_ND'
+path = '../../RawDataset/RIC/RicI2'
 
 audio = Waveform(path=path+".wav")
 groundtruth = load_groundtruth(path+".csv")
@@ -24,7 +24,6 @@ buffer_len = 512
 
 #Call system
 result = main(audio,buffer_len)
-
 #Plot results
 plot_audio(audio.waveform,result['SIGNAL_PROCESSED'],audio.sample_rate)
 plot_odf(audio.filename,audio.waveform,result['SIGNAL_PROCESSED'],audio.sample_rate,result['ONSET_LOCATIONS'],result['HFC'],result['THRESHOLD'])

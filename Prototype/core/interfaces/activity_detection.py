@@ -62,6 +62,7 @@ def activity_detection_2(signal,sample_rate,buffer_len,previous_ODF):
     :output flag: Boolean (onset/offset)
     :output signal_hfc: High Frequency Content Function
     """
+
     flag = False
     threshold = 0
 

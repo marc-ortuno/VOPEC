@@ -10,8 +10,12 @@ from scipy.interpolate import make_interp_spline, BSpline
 Comparative plot of original signal and processed signal
 """
 def plot_audio(wave_file,processed_file,sr):
-    t = np.arange(wave_file.size)/ sr
-    t2 = np.arange(processed_file.size)/ sr
+    if type(wave_file) is list:
+        t = np.arange(len(wave_file))/ sr
+        t2 = np.arange(len(processed_file))/ sr
+    else:
+        t = np.arange(wave_file.size)/ sr
+        t2 = np.arange(processed_file.size)/ sr
 
     _,axs = plt.subplots(4,1)
     plt.sca(axs[0])
@@ -197,11 +201,14 @@ def plot_ad_evaluation(signal,groundtruth,predicted,sr):
 
     plt.show()
 
-def plot_boxplot(precision,recall,f1_score,accuracy):
+def plot_boxplot(precision,recall,f1_score,accuracy,buffer_size):
+    
+    plt.figure()
     data = [precision,recall,f1_score,accuracy]
     x = ["Precision","Recall","F1-score","Accuracy"]
     sn.set_theme(style="whitegrid")
     sn.boxplot(data=data)
     sn.swarmplot(data=data, size=6, edgecolor="black", linewidth=.9)
     plt.xticks(plt.xticks()[0], x)
-    plt.show()
+    # plt.show()
+    plt.savefig('./figures/boxplot_adaptative_'+str(buffer_size)+'.png')
