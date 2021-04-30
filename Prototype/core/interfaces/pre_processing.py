@@ -52,6 +52,5 @@ def pre_processing(signal,fs):
     lp_filter = scipy_signal.butter(1, lp_fc, 'lp', fs=fs,output='sos')
     lp_filtered_signal = scipy_signal.sosfilt(lp_filter, np.abs(hp_filtered_signal))
 
-
     
-    return hp_filtered_signal.real
+    return denoised_signal.real

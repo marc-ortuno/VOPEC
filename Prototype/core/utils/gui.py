@@ -92,11 +92,12 @@ def plot_odf(name,signal,signal_proc,sr,onsets,hfc,th):
     # hfc_smooth = spl(x_new)
     # plot_c.plot(x_new,hfc_smooth,color="b")
 
-    plot_c.plot(hfc_time,hfc,color="b")
-    plot_c.plot(th_time,th,color="r")
+    plot_c.plot(hfc_time,hfc,color="b", label="ODF")
+    plot_c.plot(th_time,th,color="r",label="Threshold")
     plot_c.set_xlabel('Time')
     plot_c.set_ylabel('HFC')
-    
+    plot_c.legend()
+
     plot_d= plt.subplot(313)
     plot_d.plot(onsets_time,onsets,color="r")
     plot_d.set_xlabel('Time')

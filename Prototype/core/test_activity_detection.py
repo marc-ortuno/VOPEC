@@ -72,7 +72,6 @@ def all_dataset_test(buffer_size = 512):
             for f in files:
                 if f.endswith('.wav') and os.path.isfile(startpath+folder+f.split('.')[0]+'.csv'):
                     wav_dir = startpath+folder+f
-                    print(wav_dir)
                     csv_dir = startpath+folder+f.split('.')[0]+'.csv'
                     run_test(wav_dir,csv_dir,buffer_size,log_file)
 
@@ -104,7 +103,7 @@ def buffer_size_test(buffer_sizes):
 
 buffer_sizes = [128, 256, 512, 1024, 2048, 4096]
 # buffer_size_test(buffer_sizes)
-# all_dataset_test()
+all_dataset_test()
 generate_plots(buffer_sizes)
 # run_test('../../RawDataset/SOF/SofI2.wav,','../../RawDataset/SOF/SofI2.wav,',512)
 
