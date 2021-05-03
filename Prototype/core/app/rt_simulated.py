@@ -76,6 +76,7 @@ def process(input_buffer, output_buffer):
     global onset_timeout
 
     features = []
+    activity_detected = False
     
     if not pre_processing_by_pass:
 
@@ -97,12 +98,15 @@ def process(input_buffer, output_buffer):
                 if onset_timeout > 0:
                     onset = True
                     onset_timeout -= 1
+                    activity_detected = False
                 else:
                     onset_timeout = onset_duration
+                    activity_detected = True
 
                 if len(th) > 1 and int(th[1]) < int(th[0]):
                     onset = False
                     onset_timeout = onset_duration
+                    activity_detected = True
                     
 
 
@@ -114,7 +118,9 @@ def process(input_buffer, output_buffer):
                 onset_location.extend(np.zeros(buffer_len))
 
             #Offset detected
-            if (onset_timeout == 0):
+            if (activity_detected):
+                
+                print("ACTIVITY DETECTED")
                 if not feature_extraction_by_pass:
                     
                     #Feature Extraction Block
