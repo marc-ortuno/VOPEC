@@ -52,7 +52,7 @@ def init_classificator(knn_model = [], by_pass = False):
     classificator_by_pass = by_pass
 
 # Init audio process variables
-def init(sr,b_len):
+def init(sr,b_len,audio_len = 0):
 
     # declare variables used in `process`
     #Audio details
@@ -60,12 +60,15 @@ def init(sr,b_len):
     global buffer_len
     global onset_timeout
     global onset_duration
+    global audio_size
 
     samp_freq = sr
     buffer_len = b_len
     avg_duration = 0.190 #in seconds
     onset_duration = int(avg_duration / (b_len / sr)) #150ms average duration of a class
     onset_timeout = onset_duration
+
+    audio_size = audio_len
 
 
 # the process function!
@@ -77,7 +80,8 @@ def process(input_buffer, output_buffer):
 
     features = []
     activity_detected = False
-    
+    class_type = ""
+
     if not pre_processing_by_pass:
 
         #Pre-Processing Block
@@ -110,17 +114,15 @@ def process(input_buffer, output_buffer):
                     
 
 
-
             if onset:
                 active_signal.extend(input_buffer) # Until we get an offset, the active sound is stored for later do feature extraction an onset is False: classification.
                 onset_location.extend(np.ones(buffer_len)) # Onset location for visual analysis    
             else:
                 onset_location.extend(np.zeros(buffer_len))
-
+            
             #Offset detected
-            if (activity_detected):
+            if (activity_detected): #or (len(active_signal) >= audio_size):
                 
-                print("ACTIVITY DETECTED")
                 if not feature_extraction_by_pass:
                     
                     #Feature Extraction Block
@@ -130,12 +132,13 @@ def process(input_buffer, output_buffer):
                     if not classificator_by_pass:
                         
                         #Classificator Block
-                         predicted.append(classificator(features,model))
+                        class_type = classificator(features,model)
+                        predicted.append(class_type)
             
             last_onset = onset
 
 
-    return n_signal, features, hfc, predicted, onset_location, threshold
+    return n_signal, features, hfc, predicted, onset_location, threshold ,class_type
     
 def main(audio, buffer_len = 512):
     
@@ -145,7 +148,7 @@ def main(audio, buffer_len = 512):
     n_buffers = len(signal)//buffer_len
 
     #Init process variables
-    init(samp_freq, buffer_len)
+    init(samp_freq, buffer_len,n_buffers*buffer_len)
     
     data_type = signal.dtype
     # allocate input and output buffers
@@ -180,7 +183,7 @@ def main(audio, buffer_len = 512):
             total_th.extend([threshold]*output_buffer.size)
 
     #return in a dictionary
-    return {'SIGNAL_PROCESSED':signal_proc, 'ONSET_LOCATIONS':onset_location, 'HFC':total_hfc, 'THRESHOLD':total_th, 'PREDICTION':predicted, 'FEATURES':features}
+    return {'SIGNAL_PROCESSED':signal_proc, 'ONSET_LOCATIONS':onset_location, 'HFC':total_hfc, 'THRESHOLD':total_th, 'PREDICTION':predicted, 'FEATURES':total_features}
 
 
 

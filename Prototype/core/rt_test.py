@@ -4,6 +4,7 @@
 Matplotlib and NumPy have to be installed.
 
 """
+
 import numpy as np
 import sounddevice as sd
 from app import main,process,init,init_activity_detection,init_classificator,init_feature_extraction,init_pre_processing
@@ -26,8 +27,10 @@ def audio_callback(indata, frames, time, status):
     
     # Fancy indexing with mapping creates a (necessary!) copy:
     input_buffer = indata.flatten()
-    n_signal = process(input_buffer, signal_processed)[0]
-    signal_processed.extend(n_signal)
+    prediction = process(input_buffer, signal_processed)[6]
+    if prediction != "":
+        print(prediction)
+    # signal_processed.extend(n_signal)
     signal_original.extend(input_buffer)
 
            
@@ -44,8 +47,8 @@ try:
 
     init_pre_processing()
     init_activity_detection(func_type=2)
-    init_feature_extraction(by_pass=True)
-    init_classificator(knn_model = knn_model, by_pass=True)
+    init_feature_extraction()
+    init_classificator(knn_model = knn_model)
     init(samplerate, buffer_size)
 
     stream = sd.InputStream(
@@ -61,4 +64,5 @@ except KeyboardInterrupt:
                                         suffix='.wav', dir='')
         write(filename, int(samplerate), np.asarray(signal_original))
         plot_audio(signal_original,signal_processed,44100)
-        pass
+        sys.exit()
+
