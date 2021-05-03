@@ -18,12 +18,14 @@ def init_activity_detection(func_type = 1, by_pass = False):
     global activity_detection_type #Function name
     global activiy_detection_by_pass
     global previous_hfc
+    global previous_th
 
 
     onset_location = []
     last_onset = False
     hfc = 0
     previous_hfc = []
+    previous_th = []
     activity_detection_type = func_type
     activiy_detection_by_pass = by_pass
 
@@ -61,7 +63,7 @@ def init(sr,b_len):
 
     samp_freq = sr
     buffer_len = b_len
-    avg_duration = 0.120 #in seconds
+    avg_duration = 0.190 #in seconds
     onset_duration = int(avg_duration / (b_len / sr)) #150ms average duration of a class
     onset_timeout = onset_duration
 
@@ -74,6 +76,7 @@ def process(input_buffer, output_buffer):
     global onset_timeout
 
     features = []
+    
     if not pre_processing_by_pass:
 
         #Pre-Processing Block
@@ -84,16 +87,25 @@ def process(input_buffer, output_buffer):
             #Activity Detection Block
             onset, hfc, threshold = activity_detection(activity_detection_type,n_signal,samp_freq,buffer_len,previous_hfc)
             previous_hfc.append(hfc)
-
+            previous_th.append(threshold)
             # To prevent repeated reporting of an
             # onset (and thus producing numerous false positive detections), an
             # onset is only reported if no onsets have been detected in the previous three frames (30 ms aprox).
+            th = previous_th[-2:]
+
             if last_onset is True and onset is False:
                 if onset_timeout > 0:
                     onset = True
                     onset_timeout -= 1
                 else:
                     onset_timeout = onset_duration
+
+                if len(th) > 1 and int(th[1]) < int(th[0]):
+                    onset = False
+                    onset_timeout = onset_duration
+                    
+
+
 
             if onset:
                 active_signal.extend(input_buffer) # Until we get an offset, the active sound is stored for later do feature extraction an onset is False: classification.

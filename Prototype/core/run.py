@@ -9,7 +9,7 @@ import pickle
 filename = './app/finalized_model.sav'
 knn_model = pickle.load(open(filename, 'rb'))
 
-path = '../../RawDataset/LML_1617020140983/Kick_LML'
+path = '../../RawDataset/ND_1617474893180/HH_ND'
 
 audio = Waveform(path=path+".wav")
 groundtruth = load_groundtruth(path+".csv")
