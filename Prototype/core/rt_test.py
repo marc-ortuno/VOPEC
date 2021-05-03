@@ -6,6 +6,7 @@ Matplotlib and NumPy have to be installed.
 """
 
 import numpy as np
+import sys
 import sounddevice as sd
 from app import main,process,init,init_activity_detection,init_classificator,init_feature_extraction,init_pre_processing
 from utils import plot_audio
@@ -27,10 +28,10 @@ def audio_callback(indata, frames, time, status):
     
     # Fancy indexing with mapping creates a (necessary!) copy:
     input_buffer = indata.flatten()
-    prediction = process(input_buffer, signal_processed)[6]
+    n_signal, _, _, _, _, _ ,prediction = process(input_buffer, signal_processed)
     if prediction != "":
         print(prediction)
-    # signal_processed.extend(n_signal)
+    signal_processed.extend(n_signal)
     signal_original.extend(input_buffer)
 
            
