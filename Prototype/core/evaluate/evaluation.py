@@ -14,6 +14,8 @@ def evaluate_system(groundtruth,predicted):
     Recall
     F-Score
     """
+    print(predicted)
+    print(groundtruth)
     if len(predicted) == len(groundtruth):
         report = classification_report(groundtruth,predicted,output_dict=True)
         cm = confusion_matrix(groundtruth,predicted)

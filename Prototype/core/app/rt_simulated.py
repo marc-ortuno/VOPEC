@@ -21,6 +21,7 @@ def init_activity_detection(func_type = 1, by_pass = False):
     global previous_th
 
 
+
     onset_location = []
     last_onset = False
     hfc = 0
@@ -28,6 +29,7 @@ def init_activity_detection(func_type = 1, by_pass = False):
     previous_th = []
     activity_detection_type = func_type
     activiy_detection_by_pass = by_pass
+
 
 def init_feature_extraction(n_mfcc_arg = 20, by_pass = False):
     #Feature extraction variables
@@ -61,14 +63,18 @@ def init(sr,b_len,audio_len = 0):
     global onset_timeout
     global onset_duration
     global audio_size
+    global execution_time
+    global highest_peak
 
     samp_freq = sr
     buffer_len = b_len
-    avg_duration = 0.190 #in seconds
+    avg_duration = 0.100 #in seconds
     onset_duration = int(avg_duration / (b_len / sr)) #150ms average duration of a class
     onset_timeout = onset_duration
 
     audio_size = audio_len
+    execution_time = 0
+    highest_peak = [b_len*2]
 
 
 # the process function!
@@ -77,6 +83,8 @@ def process(input_buffer, output_buffer):
     global last_onset
     global active_signal
     global onset_timeout
+    global highest_peak
+    global execution_time
 
     features = []
     activity_detected = False
@@ -90,9 +98,10 @@ def process(input_buffer, output_buffer):
         if not activiy_detection_by_pass:
             
             #Activity Detection Block
-            onset, hfc, threshold = activity_detection(activity_detection_type,n_signal,samp_freq,buffer_len,previous_hfc)
+            onset, hfc, threshold, highest_peak = activity_detection(activity_detection_type,n_signal,samp_freq,buffer_len,previous_hfc,highest_peak)
             previous_hfc.append(hfc)
             previous_th.append(threshold)
+
             # To prevent repeated reporting of an
             # onset (and thus producing numerous false positive detections), an
             # onset is only reported if no onsets have been detected in the previous three frames (30 ms aprox).
@@ -107,10 +116,10 @@ def process(input_buffer, output_buffer):
                     onset_timeout = onset_duration
                     activity_detected = True
 
-                if len(th) > 1 and int(th[1]) < int(th[0]):
-                    onset = False
-                    onset_timeout = onset_duration
-                    activity_detected = True
+                # if len(th) > 1 and int(th[1]) < int(th[0]):
+                #     onset = False
+                #     onset_timeout = onset_duration
+                #     activity_detected = True
                     
 
 
@@ -137,6 +146,8 @@ def process(input_buffer, output_buffer):
             
             last_onset = onset
 
+        #Update execution time
+        execution_time += (buffer_len/samp_freq)     
 
     return n_signal, features, hfc, predicted, onset_location, threshold ,class_type
     
@@ -166,7 +177,7 @@ def main(audio, buffer_len = 512):
 
         # index the appropriate samples
         input_buffer = signal[k*buffer_len:(k+1)*buffer_len]
-        output_buffer, features, hfc, predicted, onset_location, threshold = process(input_buffer, output_buffer)
+        output_buffer, features, hfc, predicted, onset_location, threshold, _ = process(input_buffer, output_buffer)
 
         signal_proc[k*buffer_len:(k+1)*buffer_len] = output_buffer
 
@@ -181,6 +192,8 @@ def main(audio, buffer_len = 512):
             total_th.extend(threshold)
         else:
             total_th.extend([threshold]*output_buffer.size)
+
+
 
     #return in a dictionary
     return {'SIGNAL_PROCESSED':signal_proc, 'ONSET_LOCATIONS':onset_location, 'HFC':total_hfc, 'THRESHOLD':total_th, 'PREDICTION':predicted, 'FEATURES':total_features}

@@ -36,21 +36,10 @@ def pre_processing(signal,fs):
     #Spectral gating - D-noise
     fhat = np.fft.fft(hp_filtered_signal,n) # Compute FFT
     PSD = fhat*np.conj(fhat)/n # Power Spectrum
-    indices = PSD > 0.001
+    indices = PSD > 0.0005
     PSDclean = PSD * indices
     fhat = indices * fhat
     denoised_signal =np.fft.ifft(fhat)
     
-
-    #Squaring the filtered signal to compute the energy.
-    #This method discarded the negative part ofthe signal, which was useful to limit spurious detections after theattack
-
-    squared_signal = np.square(hp_filtered_signal)
-    
-    #Low pass filter
-    lp_fc = 25
-    lp_filter = scipy_signal.butter(1, lp_fc, 'lp', fs=fs,output='sos')
-    lp_filtered_signal = scipy_signal.sosfilt(lp_filter, np.abs(hp_filtered_signal))
-
     
     return denoised_signal.real

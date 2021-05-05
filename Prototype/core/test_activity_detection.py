@@ -44,7 +44,7 @@ def run_test(wav_dir,csv_dir,buffer_size,log_file):
 
     #Init system simulation
     init_pre_processing()
-    init_activity_detection(func_type=2)
+    init_activity_detection(func_type=1)
     init_feature_extraction(by_pass=True)
     init_classificator(by_pass=True)
     
@@ -71,7 +71,7 @@ def run_test(wav_dir,csv_dir,buffer_size,log_file):
         w.writerow(row)
         file.close()
 
-def all_dataset_test(startpath, buffer_size = 512):
+def all_dataset_test(startpath,buffer_size = 512,proposal= 3):
     '''
     all_dataset_test:
     input:
@@ -83,7 +83,7 @@ def all_dataset_test(startpath, buffer_size = 512):
 
 
     #Create dataset_log.csv file where all the metadata will be located.
-    log_file = tests_dir+'/activity_detection_log_'+str(buffer_size)+'.csv'
+    log_file = tests_dir+'/proposal_'+str(proposal)+'/activity_detection_log_'+str(buffer_size)+'.csv'
 
     with open(log_file, 'w', newline='') as f:
         # create the csv writer
@@ -103,12 +103,12 @@ def all_dataset_test(startpath, buffer_size = 512):
                     csv_dir = startpath+folder+f.split('.')[0]+'.csv'
                     run_test(wav_dir,csv_dir,buffer_size,log_file)
 
-def generate_plots(buffer_sizes):
+def generate_plots(buffer_sizes,proposal= 3):
     '''
     Read log file and creates a boxplot
     '''
     for buffer_size in buffer_sizes:
-        evaluation_csv = read_csv(tests_dir+'/activity_detection_log_'+str(buffer_size)+'.csv')
+        evaluation_csv = read_csv(tests_dir+'/proposal_'+str(proposal)+'/activity_detection_log_'+str(buffer_size)+'.csv')
         precision = []
         recall = []
         f1_score = []
@@ -127,7 +127,7 @@ def buffer_size_test(path,buffer_sizes):
     #Run all dataset_test with different buffer size
 
     for buffer_size in buffer_sizes:
-        all_dataset_test(path,buffer_size=buffer_size)
+        all_dataset_test(path,buffer_size=buffer_size,proposal=2)
 
 
 
@@ -137,8 +137,8 @@ buffer_sizes = [128, 256, 512, 1024, 2048, 4096] #Different buffer size of the t
 # buffer_size_test(startpath,buffer_sizes)
 
 #Run tests
-all_dataset_test(startpath)
+# all_dataset_test(startpath)
 
 #Save plots
-generate_plots(buffer_sizes)
+generate_plots(buffer_sizes,proposal=3)
 

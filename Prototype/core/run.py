@@ -9,7 +9,8 @@ import pickle
 filename = './app/finalized_model.sav'
 knn_model = pickle.load(open(filename, 'rb'))
 
-path = '../../RawDataset/ARF_1616756270238/Freestyle_ARF'
+# ../../RawDataset/LML_1617020140983/Kick_LML
+path = '../../RawDataset/MSF_1616750364871/Kick_MSF'
 
 audio = Waveform(path=path+".wav")
 groundtruth = load_groundtruth(path+".csv")
@@ -17,9 +18,9 @@ groundtruth = load_groundtruth(path+".csv")
 
 #Init system
 init_pre_processing()
-init_activity_detection(func_type=2)
-init_feature_extraction(by_pass=True)
-init_classificator(knn_model = knn_model, by_pass=True)
+init_activity_detection(func_type=1)
+init_feature_extraction(by_pass=False)
+init_classificator(knn_model = knn_model, by_pass=False)
 buffer_len = 512
 
 #Call system
