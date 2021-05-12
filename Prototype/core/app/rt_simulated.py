@@ -130,7 +130,7 @@ def process(input_buffer, output_buffer):
                 onset_location.extend(np.zeros(buffer_len))
 
             # Offset detected
-            if activity_detected: #or (int(execution_time*samp_freq) + buffer_len >= audio_size):
+            if activity_detected: # or (int(execution_time*samp_freq) + buffer_len >= audio_size):
 
                 if not feature_extraction_by_pass:
 

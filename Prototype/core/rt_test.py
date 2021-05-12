@@ -14,12 +14,16 @@ import pickle
 import tempfile
 from scipy.io.wavfile import write
 from models import Waveform
+import pandas as pd
 
 # Import model
 
 
-filename = './app/finalized_model_v2.sav'
+filename = './app/finalized_model_all_features.sav'
 knn_model = pickle.load(open(filename, 'rb'))
+
+model_normalization = './app/model_normalization_all_features.csv'
+normalization_values = pd.read_csv(model_normalization)
 
 signal_original = []
 signal_processed = []
@@ -64,8 +68,8 @@ try:
     buffer_size = 512
 
     init_pre_processing()
-    init_activity_detection(func_type=1)
-    init_feature_extraction(n_mfcc_arg=10)
+    init_activity_detection()
+    init_feature_extraction(func_type="all", n_mfcc_arg=10, norm_file=normalization_values)
     init_classificator(knn_model=knn_model)
     init(samplerate, buffer_size)
 

@@ -5,7 +5,7 @@ import csv
 
 from app import init_pre_processing, init_activity_detection, init_feature_extraction, init_classificator, main
 from dataset import get_dataset, dataset_analyzer
-from interfaces import feature_extraction, feature_extraction1
+from interfaces import feature_extraction
 
 import pickle
 # ML
@@ -20,15 +20,13 @@ mfcc = 10
 log_file = './test_logs/model_all_features.csv'
 model_normalization = './app/model_normalization_all_features.csv'
 
-normalization_values = pd.read_csv(model_normalization)
-
 
 def classify_and_plot(data):
     with open(log_file, 'w', newline='') as f:
         # create the csv writer
         writer = csv.writer(f)
         # write a row to the csv file
-        header = ['audio_class', 'Duration', 'mfcc_mean_1', 'mfcc_mean_2', 'mfcc_mean_3', 'mfcc_mean_4', 'mfcc_mean_5',
+        header = ['audio_class', 'duration', 'mfcc_mean_1', 'mfcc_mean_2', 'mfcc_mean_3', 'mfcc_mean_4', 'mfcc_mean_5',
                   'mfcc_mean_6',
                   'mfcc_mean_7', 'mfcc_mean_8', 'mfcc_mean_9', 'mfcc_mean_10', 'mfcc_std_1', 'mfcc_std_2', 'mfcc_std_3',
                   'mfcc_std_4', 'mfcc_std_5', 'mfcc_std_6', 'mfcc_std_7', 'mfcc_std_8', 'mfcc_std_9', 'mfcc_std_10',
@@ -48,7 +46,7 @@ def classify_and_plot(data):
         # create the csv writer
         writer = csv.writer(f)
         # write a row to the csv file
-        header = ['Duration', 'mfcc_mean_1', 'mfcc_mean_2', 'mfcc_mean_3', 'mfcc_mean_4', 'mfcc_mean_5',
+        header = ['duration', 'mfcc_mean_1', 'mfcc_mean_2', 'mfcc_mean_3', 'mfcc_mean_4', 'mfcc_mean_5',
                   'mfcc_mean_6',
                   'mfcc_mean_7', 'mfcc_mean_8', 'mfcc_mean_9', 'mfcc_mean_10', 'mfcc_std_1', 'mfcc_std_2', 'mfcc_std_3',
                   'mfcc_std_4', 'mfcc_std_5', 'mfcc_std_6', 'mfcc_std_7', 'mfcc_std_8', 'mfcc_std_9', 'mfcc_std_10',
@@ -69,16 +67,16 @@ def classify_and_plot(data):
     for audio in data:
 
         # Init system
-        init_pre_processing()
-        init_activity_detection()
-        init_feature_extraction(n_mfcc_arg=mfcc)
-        init_classificator(by_pass=True)
-        buffer_len = 512
+        # init_pre_processing()
+        # init_activity_detection()
+        # init_feature_extraction(n_mfcc_arg=mfcc)
+        # init_classificator(by_pass=True)
+        # buffer_len = 512
+        #
+        # # Call system
+        # response = main(audio, buffer_len)
 
-        # Call system
-        response = main(audio, buffer_len)
-
-        features = response['FEATURES']
+        features = feature_extraction("all", audio.waveform, audio.sample_rate, 10, 512, [])
 
         # features = response['FEATURES']
 
@@ -99,7 +97,7 @@ def classify_and_plot(data):
         else:
             print(len(features))
 
-    X = np.array(X)
+    X = np.array(normalize(X))
     Y = np.array(Y)
     X_train, X_test, y_train, y_test = train_test_split(X, Y)
 
