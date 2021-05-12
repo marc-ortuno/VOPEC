@@ -12,35 +12,30 @@ import pickle
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import classification_report
-import seaborn as sn
 import pandas as pd
-from utils import boxplot, read_csv
+from utils import boxplot, read_csv, plot_odf
 
-mfcc = 10
+mfcc = 20
 
-log_file = './test_logs/model_proposal_2.csv'
-model_normalization = './app/model_normalization2.csv'
+log_file = './test_logs/model_mfcss.csv'
+model_normalization = './app/model_normalization_mfccs.csv'
 
-normalization_file = './app/model_normalization.csv'
-normalization_values = pd.read_csv(normalization_file)
+
+# normalization_values = pd.read_csv(model_normalization)
+
 
 def classify_and_plot(data):
     with open(log_file, 'w', newline='') as f:
         # create the csv writer
         writer = csv.writer(f)
         # write a row to the csv file
-        header = ['audio_class', 'Duration', 'mfcc_mean_1', 'mfcc_mean_2', 'mfcc_mean_3', 'mfcc_mean_4', 'mfcc_mean_5',
-                  'mfcc_mean_6',
-                  'mfcc_mean_7', 'mfcc_mean_8', 'mfcc_mean_9', 'mfcc_mean_10', 'mfcc_std_1', 'mfcc_std_2', 'mfcc_std_3',
-                  'mfcc_std_4', 'mfcc_std_5', 'mfcc_std_6', 'mfcc_std_7', 'mfcc_std_8', 'mfcc_std_9', 'mfcc_std_10',
-                  'rms_mean', 'rms_std', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_rolloff_mean',
-                  'spectral_rolloff_std', 'spectral_bandwidth_mean', 'spectral_bandwidth_std',
-                  'spectral_contrast_mean_1', 'spectral_contrast_mean_2', 'spectral_contrast_mean_3',
-                  'spectral_contrast_mean_4', 'spectral_contrast_mean_5', 'spectral_contrast_mean_6',
-                  'spectral_contrast_mean_7', 'spectral_contrast_std_1', 'spectral_contrast_std_2',
-                  'spectral_contrast_std_3', 'spectral_contrast_std_4', 'spectral_contrast_std_5',
-                  'spectral_contrast_std_6', 'spectral_contrast_std_7', 'spectral_flatness_mean',
-                  'spectral_flatness_std']
+        header = ['audio_class', 'mfcc_mean_1', 'mfcc_mean_2', 'mfcc_mean_3', 'mfcc_mean_4', 'mfcc_mean_5',
+                  'mfcc_mean_6', 'mfcc_mean_7', 'mfcc_mean_8', 'mfcc_mean_9', 'mfcc_mean_10', 'mfcc_mean_11',
+                  'mfcc_mean_12', 'mfcc_mean_13', 'mfcc_mean_14', 'mfcc_mean_15',
+                  'mfcc_mean_16', 'mfcc_mean_17', 'mfcc_mean_18', 'mfcc_mean_19', 'mfcc_mean_20',
+                  'mfcc_std_1', 'mfcc_std_2', 'mfcc_std_3', 'mfcc_std_4', 'mfcc_std_5', 'mfcc_std_6', 'mfcc_std_7',
+                  'mfcc_std_8', 'mfcc_std_9', 'mfcc_std_10', 'mfcc_std_11', 'mfcc_std_12', 'mfcc_std_13', 'mfcc_std_14',
+                  'mfcc_std_15', 'mfcc_std_16', 'mfcc_std_17', 'mfcc_std_18', 'mfcc_std_19', 'mfcc_std_20']
         writer.writerow(header)
         # close the file
         f.close()
@@ -49,18 +44,13 @@ def classify_and_plot(data):
         # create the csv writer
         writer = csv.writer(f)
         # write a row to the csv file
-        header = ['Duration', 'mfcc_mean_1', 'mfcc_mean_2', 'mfcc_mean_3', 'mfcc_mean_4', 'mfcc_mean_5',
-                  'mfcc_mean_6',
-                  'mfcc_mean_7', 'mfcc_mean_8', 'mfcc_mean_9', 'mfcc_mean_10', 'mfcc_std_1', 'mfcc_std_2', 'mfcc_std_3',
-                  'mfcc_std_4', 'mfcc_std_5', 'mfcc_std_6', 'mfcc_std_7', 'mfcc_std_8', 'mfcc_std_9', 'mfcc_std_10',
-                  'rms_mean', 'rms_std', 'spectral_centroid_mean', 'spectral_centroid_std', 'spectral_rolloff_mean',
-                  'spectral_rolloff_std', 'spectral_bandwidth_mean', 'spectral_bandwidth_std',
-                  'spectral_contrast_mean_1', 'spectral_contrast_mean_2', 'spectral_contrast_mean_3',
-                  'spectral_contrast_mean_4', 'spectral_contrast_mean_5', 'spectral_contrast_mean_6',
-                  'spectral_contrast_mean_7', 'spectral_contrast_std_1', 'spectral_contrast_std_2',
-                  'spectral_contrast_std_3', 'spectral_contrast_std_4', 'spectral_contrast_std_5',
-                  'spectral_contrast_std_6', 'spectral_contrast_std_7', 'spectral_flatness_mean',
-                  'spectral_flatness_std']
+        header = ['mfcc_mean_1', 'mfcc_mean_2', 'mfcc_mean_3', 'mfcc_mean_4', 'mfcc_mean_5',
+                  'mfcc_mean_6', 'mfcc_mean_7', 'mfcc_mean_8', 'mfcc_mean_9', 'mfcc_mean_10', 'mfcc_mean_11',
+                  'mfcc_mean_12', 'mfcc_mean_13', 'mfcc_mean_14', 'mfcc_mean_15',
+                  'mfcc_mean_16', 'mfcc_mean_17', 'mfcc_mean_18', 'mfcc_mean_19', 'mfcc_mean_20',
+                  'mfcc_std_1', 'mfcc_std_2', 'mfcc_std_3', 'mfcc_std_4', 'mfcc_std_5', 'mfcc_std_6', 'mfcc_std_7',
+                  'mfcc_std_8', 'mfcc_std_9', 'mfcc_std_10', 'mfcc_std_11', 'mfcc_std_12', 'mfcc_std_13', 'mfcc_std_14',
+                  'mfcc_std_15', 'mfcc_std_16', 'mfcc_std_17', 'mfcc_std_18', 'mfcc_std_19', 'mfcc_std_20']
         writer.writerow(header)
         f.close()
 
@@ -68,26 +58,23 @@ def classify_and_plot(data):
     Y = []
 
     for audio in data:
-
         buffer_len = 512
 
         # Init system
         init_pre_processing()
         init_activity_detection()
-        init_feature_extraction(n_mfcc_arg=10)
+        init_feature_extraction(n_mfcc_arg=mfcc)
         init_classificator(by_pass=True)
-        buffer_len = 512
 
         # Call system
         response = main(audio, buffer_len)
 
         features = response['FEATURES']
 
-        # features = response['FEATURES']
-
-        if len(features) == 45:
+        if len(features) != 0:
             # plot_audio(audio.waveform,response['SIGNAL_PROCESSED'],audio.sample_rate)
             # plot_odf(audio.filename,audio.waveform,response['SIGNAL_PROCESSED'],audio.sample_rate,response['ONSET_LOCATIONS'],response['HFC'],response['THRESHOLD'])
+            features = features[:40]
             row = [audio.class_type]
             row.extend(features)
 
@@ -102,12 +89,12 @@ def classify_and_plot(data):
         else:
             print(len(features))
 
-    X = np.array(X)
+    X = np.array(normalize(X))
     Y = np.array(Y)
     X_train, X_test, y_train, y_test = train_test_split(X, Y)
 
     # init vars
-    n_neighbors = 3
+    n_neighbors = 1
     h = .1  # step size in the mesh
 
     sss = X[:, 0]
@@ -179,5 +166,5 @@ def normalize(data):
 knn_model = classify_and_plot(get_dataset())
 # features_boxplot()
 # save the model to disk
-filename = './app/finalized_model_v2.sav'
+filename = './app/finalized_model_mfccs.sav'
 pickle.dump(knn_model, open(filename, 'wb'))

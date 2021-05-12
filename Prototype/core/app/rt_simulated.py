@@ -27,19 +27,20 @@ def init_activity_detection(func_type=1, by_pass=False):
     activiy_detection_by_pass = by_pass
 
 
-def init_feature_extraction(n_mfcc_arg=20, by_pass=False):
+def init_feature_extraction(func_type="mfcc", n_mfcc_arg=20, by_pass=False, norm_file=[]):
     # Feature extraction variables
     global active_signal
     global features
     global n_mfcc
     global feature_extraction_by_pass
     global normalization_values
+    global feature_extraction_type  # Function name
 
-    normalization_file = './app/model_normalization.csv'
-    normalization_values = pd.read_csv(normalization_file)
+    normalization_values = norm_file
     active_signal = []
     features = []
     n_mfcc = n_mfcc_arg
+    feature_extraction_type = func_type
     feature_extraction_by_pass = by_pass
 
 
@@ -129,12 +130,13 @@ def process(input_buffer, output_buffer):
                 onset_location.extend(np.zeros(buffer_len))
 
             # Offset detected
-            if activity_detected: # or (int(execution_time*samp_freq) + buffer_len >= audio_size):
+            if activity_detected: #or (int(execution_time*samp_freq) + buffer_len >= audio_size):
 
                 if not feature_extraction_by_pass:
 
                     # Feature Extraction Block
-                    features = feature_extraction(active_signal, samp_freq, n_mfcc, buffer_len, normalization_values)
+                    features = feature_extraction(feature_extraction_type, active_signal, samp_freq, n_mfcc, buffer_len,
+                                                  normalization_values)
                     active_signal = []  # Clean active signal buffer
 
                     if not classificator_by_pass:

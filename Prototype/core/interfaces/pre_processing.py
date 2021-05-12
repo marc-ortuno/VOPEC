@@ -36,7 +36,7 @@ def pre_processing(signal,fs):
     #Spectral gating - D-noise
     fhat = np.fft.fft(hp_filtered_signal,n) # Compute FFT
     PSD = fhat*np.conj(fhat)/n # Power Spectrum
-    indices = PSD > 0.0005
+    indices = PSD > 0.0002
     PSDclean = PSD * indices
     fhat = indices * fhat
     denoised_signal =np.fft.ifft(fhat)

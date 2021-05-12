@@ -4,21 +4,25 @@ from utils import load_groundtruth
 from utils import plot_audio, plot_odf, plot_confusion_matrix, plot_evaluation_report
 from evaluate import evaluate_system
 import pickle
+import pandas as pd
 
 # Import model
-filename = './app/finalized_model_v2.sav'
+filename = './app/finalized_model_mfccs.sav'
 knn_model = pickle.load(open(filename, 'rb'))
 
+model_normalization = './app/model_normalization_mfccs.csv'
+
+normalization_values = pd.read_csv(model_normalization)
 # ../../RawDataset/LML_1617020140983/Kick_LML
-path = './data/realtime_demo__vh7bpu0'
+path = '../../RawDataset/LML_1617020140983/Kick_LML'
 
 audio = Waveform(path=path + ".wav")
-groundtruth = load_groundtruth('../../RawDataset/LML_1617020140983/Kick_LML' + ".csv")
+groundtruth = load_groundtruth(path + ".csv")
 
 # Init system
 init_pre_processing()
 init_activity_detection(func_type=1)
-init_feature_extraction(by_pass=False, n_mfcc_arg=10)
+init_feature_extraction(by_pass=False, n_mfcc_arg=20, norm_file=normalization_values)
 init_classificator(knn_model=knn_model, by_pass=False)
 buffer_len = 512
 

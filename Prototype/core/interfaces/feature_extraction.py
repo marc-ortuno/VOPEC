@@ -3,7 +3,14 @@ import librosa.feature as feature
 import librosa
 
 
-def feature_extraction1(signal, samp_freq, n_mfcc, buffer_len):
+def feature_extraction(func_type, signal, sr, n_mfcc, buffer_len, normalization_values):
+    return {
+        "mfcc": lambda: feature_extraction_mfcc(signal, sr, n_mfcc, buffer_len, normalization_values),
+        "all": lambda: feature_extraction_all(signal, sr, n_mfcc, buffer_len, normalization_values),
+    }[func_type]()
+
+
+def feature_extraction_mfcc(signal, sr, n_mfcc, buffer_len, normalization_values=[]):
     """
     Feature extraction interface
     :param signal: Signal
@@ -14,12 +21,35 @@ def feature_extraction1(signal, samp_freq, n_mfcc, buffer_len):
     signal = np.array(signal)
     features = []
     if signal.size != 0:
-        features = feature.mfcc(y=signal, sr=samp_freq, n_mfcc=n_mfcc, n_fft=512, hop_length=128)
-        features = np.mean(features, axis=1)
+        mfcc = feature.mfcc(y=signal, sr=sr, n_mfcc=n_mfcc, n_fft=int(512*2), hop_length=int(128*2))
+        mfcc_mean = np.mean(mfcc, axis=1)
+        mfcc_std = np.std(mfcc, axis=1)
+
+        if len(normalization_values) > 1:
+            features.extend(normalize(mfcc_mean, normalization_values[['mfcc_mean_1', 'mfcc_mean_2', 'mfcc_mean_3',
+                                                                       'mfcc_mean_4', 'mfcc_mean_5', 'mfcc_mean_6',
+                                                                       'mfcc_mean_7', 'mfcc_mean_8', 'mfcc_mean_9',
+                                                                       'mfcc_mean_10', 'mfcc_mean_11', 'mfcc_mean_12',
+                                                                       'mfcc_mean_13', 'mfcc_mean_14', 'mfcc_mean_15',
+                                                                       'mfcc_mean_16', 'mfcc_mean_17', 'mfcc_mean_18',
+                                                                       'mfcc_mean_19', 'mfcc_mean_20']]))
+            features.extend(normalize(mfcc_std, normalization_values[['mfcc_std_1', 'mfcc_std_2', 'mfcc_std_3',
+                                                                      'mfcc_std_4', 'mfcc_std_5', 'mfcc_std_6',
+                                                                      'mfcc_std_7', 'mfcc_std_8', 'mfcc_std_9',
+                                                                      'mfcc_std_10', 'mfcc_std_11', 'mfcc_std_12',
+                                                                      'mfcc_std_13', 'mfcc_std_14', 'mfcc_std_15',
+                                                                      'mfcc_std_16', 'mfcc_std_17', 'mfcc_std_18',
+                                                                      'mfcc_std_19', 'mfcc_std_20']]))
+        else:
+            features.extend(mfcc_mean)
+            features.extend(mfcc_std)
+
+        # features.extend(mfcc_mean)
+
     return features
 
 
-def feature_extraction(signal, sr, n_mfcc, buffer_len, normalization_values):
+def feature_extraction_all(signal, sr, n_mfcc, buffer_len, normalization_values):
     """
     Feature extraction interface
     :param signal: Signal
@@ -39,7 +69,7 @@ def feature_extraction(signal, sr, n_mfcc, buffer_len, normalization_values):
 
         # Duration
         # features.append(normalize(len(signal), normalization_values['Duration']))
-        features.append(normalize(len(signal),normalization_values['duration']))
+        features.append(normalize(len(signal), normalization_values['duration']))
 
         # Mel Frequency cepstral coefficients
         mfcc = feature.mfcc(y=signal, sr=sr, n_mfcc=n_mfcc, n_fft=int(512 / 2), hop_length=int(128 / 2))
