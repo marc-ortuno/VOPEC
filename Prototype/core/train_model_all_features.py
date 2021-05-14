@@ -17,7 +17,7 @@ from utils import boxplot, read_csv, plot_odf
 
 mfcc = 10
 
-log_file = './test_logs/model_all_features.csv'
+log_file = 'evaluation_logs/classificator_evaluation/model_all_features.csv'
 model_normalization = './app/model_normalization_all_features.csv'
 
 

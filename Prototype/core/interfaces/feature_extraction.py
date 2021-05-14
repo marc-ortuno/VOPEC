@@ -16,7 +16,7 @@ def feature_extraction_mfcc(signal, sr, n_mfcc, buffer_len, normalization_values
     :param signal: Signal
     :output features: Array of features
 
-    Features are extracted from the incoming audio signal when an onset is detected.
+    Features are extracted from the incoming audio signal when an onset is detected.func_type=1
     """
     signal = np.array(signal)
     features = []

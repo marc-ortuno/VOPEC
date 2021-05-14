@@ -97,7 +97,7 @@ def process(input_buffer, output_buffer):
 
         if not activiy_detection_by_pass:
 
-            # Activity Detection Block
+            # activity_detection_evaluation Block
             onset, hfc, threshold, highest_peak = activity_detection(activity_detection_type, n_signal, samp_freq,
                                                                      buffer_len, previous_hfc, highest_peak)
             previous_hfc.append(hfc)

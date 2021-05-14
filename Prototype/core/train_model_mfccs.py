@@ -17,11 +17,9 @@ from utils import boxplot, read_csv, plot_odf
 
 mfcc = 20
 
-log_file = './test_logs/model_mfcss.csv'
+log_file = 'evaluation_logs/classificator_evaluation/model_mfcss.csv'
 model_normalization = './app/model_normalization_mfccs.csv'
 
-
-# normalization_values = pd.read_csv(model_normalization)
 
 
 def classify_and_plot(data):

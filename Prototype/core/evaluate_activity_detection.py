@@ -21,7 +21,7 @@ compare it with the grountruth annotation which is provided by the csv annotatio
 '''
 
 # save test metrics in a csv to then make
-tests_dir = './test_logs'
+tests_dir = 'evaluation_logs/activity_detection_evaluation'
 
 # create root folder
 if not os.path.exists(tests_dir):
@@ -62,8 +62,7 @@ def run_test(wav_dir, csv_dir, buffer_size, log_file):
         groundtruth_activity[sample_instant_1:sample_instant_2] = 1
 
     # evaluate activity detection
-    precision, recall, f1_score, accuracy = evaluate_activity_detection(audio.waveform, groundtruth_activity,
-                                                                        result['ONSET_LOCATIONS'], sample_rate)
+    precision, recall, f1_score, accuracy = evaluate_activity_detection(groundtruth_activity, result['ONSET_LOCATIONS'])
 
     row = [wav_dir, precision, recall, f1_score, accuracy]
 
