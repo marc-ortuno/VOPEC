@@ -1,4 +1,4 @@
-from evaluate import evaluate_activity_detection, evaluate_system, evaluate_classificator
+from evaluate import evaluate_activity_detection, evaluate_system
 from app import main, init_activity_detection, init_classificator, init_feature_extraction, init_pre_processing
 from models import Waveform
 from utils import load_groundtruth, load_annotation, read_csv, plot_metrics_boxplot, plot_confusion_matrix, \
@@ -20,7 +20,7 @@ classification interface by comparing the classificator output with the correspo
 '''
 
 # save test metrics in a csv to then make
-tests_dir = 'evaluation_logs/classificator_evaluation'
+tests_dir = 'evaluation_logs/system_evaluation'
 # Import model
 filename = './app/finalized_model_mfccs.sav'
 knn_model = pickle.load(open(filename, 'rb'))
@@ -58,11 +58,9 @@ def run_test(wav_dir, csv_dir, buffer_size, log_file, proposal):
     prediction = get_prediction_time_instants(result['ONSET_LOCATIONS'], result['PREDICTION'], audio.sample_rate)
 
     # evaluate activity detection
-    report, cm = evaluate_classificator(groundtruth, prediction)
+    precision, recall, fscore = evaluate_system(groundtruth, prediction)
 
-    #plot_confusion_matrix(cm)
-    metrics = report['macro avg']
-    row = [wav_dir, metrics.get('precision'), metrics.get('recall'), metrics.get('f1-score')]
+    row = [wav_dir, precision, recall, fscore]
 
     with open(log_file, 'a+', newline='') as file:
         w = csv.writer(file)
@@ -81,13 +79,13 @@ def all_dataset_test(startpath, buffer_size=512, proposal="mfcc"):
     '''
 
     # Create dataset_log.csv file where all the metadata will be located.
-    log_file = tests_dir + '/classification_log_' + str(proposal) + '.csv'
+    log_file = tests_dir + '/system_log_' + str(proposal) + '.csv'
 
     with open(log_file, 'w', newline='') as f:
         # create the csv writer
         writer = csv.writer(f)
         # write a row to the csv file
-        header = ['Audio', 'Precision (macro avg)', 'Recall (macro avg)', 'F1-Score (macro avg)']
+        header = ['Audio', 'Precision', 'Recall', 'F1-Score']
         writer.writerow(header)
         # close the file
         f.close()
@@ -108,7 +106,7 @@ def generate_plots():
     '''
     proposals = ["mfcc", "all"]
     for proposal in proposals:
-        final_dir = tests_dir + '/classification_log_' + str(proposal)
+        final_dir = tests_dir + '/system_log_' + str(proposal)
         evaluation_csv = read_csv(final_dir + '.csv')
         precision = []
         recall = []
@@ -120,8 +118,8 @@ def generate_plots():
             recall.append(evaluation_csv[i][2])
             f1_score.append(evaluation_csv[i][3])
 
-        title = "Evaluation of classification for '" + proposal + "' model"
-        x = ['Precision (macro avg)', 'Recall (macro avg)', 'F1-Score (macro avg)']
+        title = "Evaluation of event detection"
+        x = ["Precision", "Recall", "F1-score"]
         plot_metrics_classification_boxplot(precision, recall, f1_score, title, x, final_dir)
 
 
@@ -130,7 +128,7 @@ def generate_plots():
 startpath = "../../RawDataset"  # Root dir of test audios
 
 # Run tests
-all_dataset_test(startpath, proposal="mfcc")
+#all_dataset_test(startpath, proposal="mfcc")
 
 # Save plots
 generate_plots()

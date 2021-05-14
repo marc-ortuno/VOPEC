@@ -1,4 +1,4 @@
-Audio,Precision,Recall,F1-Score
+Audio,Precision (macro avg),Recall (macro avg),F1-Score (macro avg)
 ../../RawDataset/MTP_1617476751923/HH_MTP.wav,1.0,1.0,1.0
 ../../RawDataset/MTP_1617476751923/Snare_MTP.wav,1.0,1.0,1.0
 ../../RawDataset/MTP_1617476751923/Kick_MTP.wav,1.0,1.0,1.0

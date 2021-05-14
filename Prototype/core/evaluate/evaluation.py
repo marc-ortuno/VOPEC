@@ -9,12 +9,9 @@ import sys
 import numpy as np
 
 
-def evaluate_system(groundtruth, predicted):
+def classification_assignment(groundtruth, predicted):
     """
-    Tests to prove the system
-    Precision
-    Recall
-    F-Score
+    This algorithm solves the problem of assigning a prediction class with its corresponding groundtruth.
     """
     matrix = np.zeros((len(predicted) // 2, len(groundtruth) // 2))
 
@@ -29,35 +26,66 @@ def evaluate_system(groundtruth, predicted):
             matrix[ii, jj] = distance
 
     th = 0.05
-    result = []
+    assignment_index = []
     for row in range(0, matrix.shape[0]):
         min_value = np.min(matrix[row, :])
         index = np.argmin(matrix[row, :])
         if min_value <= th:
-            result.append(index)
+            assignment_index.append(index)
         else:
-            result.append(None)
+            assignment_index.append(None)
 
-    # EVALUATE
-    # Metrics
-    TP = 0
-    TN = 0
-    FN = 0
-    FP = 0
     final_prediction = []
     final_grountruth = []
-    for index in range(0, len(result)):
-        if result[index] is not None:
+    for index in range(0, len(assignment_index)):
+        if assignment_index[index] is not None:
             final_prediction.append(predicted[index * 2][1])
-            final_grountruth.append(groundtruth[result[index] * 2][1])
+            final_grountruth.append(groundtruth[assignment_index[index] * 2][1])
 
-    precision, recall, fscore, support = precision_recall_fscore_support(final_grountruth, final_prediction,
-                                                                         average='macro')
-    cm = confusion_matrix(final_grountruth, final_prediction)
+    return final_grountruth, final_prediction, assignment_index
 
-    FP = result.count(None)
 
-    return precision, recall, fscore, cm, FP
+def evaluate_system(groundtruth, predicted):
+    """
+    Evaluate the whole system
+    """
+    m_groundtruth, m_prediction, assignment = classification_assignment(groundtruth, predicted)
+
+    # Metrics
+    TP = 0
+    FN = 0
+    FP = 0
+
+    for index in range(0, len(groundtruth)//2, 1):
+        if index in assignment:
+            TP += 1
+        else:
+            FN += 1
+
+    FP = assignment.count(None)
+
+    if (TP == 0 and FP == 0) or (TP == 0 and FN == 0):
+        precision = 0
+        recall = 0
+        fscore = 0
+    else:
+        precision = TP / (TP + FP)
+        recall = TP / (TP + FN)
+        fscore = 2 * ((precision * recall) / (precision + recall))
+
+    return precision, recall, fscore
+
+
+def evaluate_classificator(groundtruth, predicted):
+    """
+    Evaluate the classificator interface
+    """
+    m_groundtruth, m_prediction, assignment = classification_assignment(groundtruth, predicted)
+
+    report = classification_report(m_groundtruth, m_prediction, output_dict=True)
+    cm = confusion_matrix(m_groundtruth, m_prediction)
+
+    return report, cm
 
 
 def evaluate_activity_detection(groundtruth, predicted):

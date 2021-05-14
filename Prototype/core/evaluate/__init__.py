@@ -1,1 +1,1 @@
-from .evaluation import evaluate_system, evaluate_activity_detection
+from .evaluation import evaluate_system, evaluate_activity_detection, evaluate_classificator

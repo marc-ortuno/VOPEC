@@ -235,16 +235,17 @@ def plot_metrics_boxplot(precision, recall, f1_score, accuracy, buffer_size):
     # plt.show()
     plt.savefig('./figures/boxplot_adaptative_' + str(buffer_size) + '.png')
 
-def plot_metrics_classification_boxplot(precision, recall, f1_score, proposal):
+
+def plot_metrics_classification_boxplot(precision, recall, f1_score, title, x, dir):
     plt.figure()
     data = [precision, recall, f1_score]
-    x = ["Precision", "Recall", "F1-score"]
-    plt.title("Classification: " + proposal)
+    plt.title(title)
     sn.set_theme(style="whitegrid")
     sn.boxplot(data=data)
     plt.xticks(plt.xticks()[0], x)
-    plt.show()
-    # plt.savefig('./figures/boxplot_classification_' + str(proposal) + '.png')
+    #plt.show()
+    plt.savefig(dir + '.png')
+
 
 def boxplot(data, title):
     plt.figure()
