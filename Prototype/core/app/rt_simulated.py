@@ -3,8 +3,11 @@ from interfaces import pre_processing, activity_detection, feature_extraction, c
 import pandas as pd
 # noinspection INSPECTION_NAME
 
-def init_pre_processing(by_pass=False):
+def init_pre_processing(by_pass=False, bands = 8):
     global pre_processing_by_pass
+    global n_bands
+
+    n_bands = bands
     pre_processing_by_pass = by_pass
 
 
@@ -21,8 +24,8 @@ def init_activity_detection(func_type=1, by_pass=False):
     onset_location = []
     last_onset = False
     hfc = 0
-    previous_hfc = []
-    previous_th = []
+    previous_hfc = np.zeros(n_bands)
+    previous_th = np.zeros(n_bands)
     activity_detection_type = func_type
     activiy_detection_by_pass = by_pass
 
@@ -75,7 +78,8 @@ def init(sr, b_len, audio_len=0):
 
     audio_size = audio_len
     execution_time = 0
-    highest_peak = [b_len * 1.8]
+    highest_peak = np.full(n_bands, b_len*0.8)
+
 
 
 # the process function!
@@ -85,6 +89,8 @@ def process(input_buffer, output_buffer):
     global onset_timeout
     global highest_peak
     global execution_time
+    global previous_hfc
+    global previous_th
 
     features = []
     activity_detected = False
@@ -93,20 +99,21 @@ def process(input_buffer, output_buffer):
     if not pre_processing_by_pass:
 
         # Pre-Processing Block
-        n_signal = pre_processing(input_buffer, samp_freq)
+        subband_signal, n_signal = pre_processing(input_buffer, samp_freq, n_bands)
 
         if not activiy_detection_by_pass:
 
             # activity_detection_evaluation Block
-            onset, hfc, threshold, highest_peak = activity_detection(activity_detection_type, n_signal, samp_freq,
+            onset, hfc, threshold, highest_peak = activity_detection(activity_detection_type, subband_signal, samp_freq,
                                                                      buffer_len, previous_hfc, highest_peak)
-            previous_hfc.append(hfc)
-            previous_th.append(threshold)
+            previous_hfc = np.vstack((previous_hfc, hfc))
+            previous_th = np.vstack((previous_th, threshold))
+
 
             # To prevent repeated reporting of an
             # onset (and thus producing numerous false positive detections), an
             # onset is only reported if no onsets have been detected in the previous three frames (30 ms aprox).
-            th = previous_th[-2:]
+            th = previous_th[-2:].sum(axis=1)
 
             if last_onset is True and onset is False:
                 if onset_timeout > 0:
@@ -117,7 +124,7 @@ def process(input_buffer, output_buffer):
                     onset_timeout = onset_duration
                     activity_detected = True
 
-                if len(th) > 1 and int(th[1]) < int(th[0]) and int(th[1]) - int(th[0]) >= (-4 * buffer_len):
+                if len(th) > 1 and int(th[1]) < int(th[0]) and int(th[1]) - int(th[0]) >= (-4* buffer_len):
                     onset = False
                     onset_timeout = onset_duration
                     activity_detected = True
@@ -184,14 +191,14 @@ def main(audio, buffer_len=512):
         total_features.extend(features)
 
         if type(hfc) is np.ndarray:
-            total_hfc.extend(hfc)
+            total_hfc.extend([np.sum(hfc)] * output_buffer.size)
         else:
-            total_hfc.extend([hfc] * output_buffer.size)
+            total_hfc.extend([np.sum(hfc)] * output_buffer.size)
 
         if type(threshold) is np.ndarray:
-            total_th.extend(threshold)
+            total_th.extend([np.sum(threshold)] * output_buffer.size)
         else:
-            total_th.extend([threshold] * output_buffer.size)
+            total_th.extend([np.sum(threshold)] * output_buffer.size)
 
     # return in a dictionary
     return {'SIGNAL_PROCESSED': signal_proc, 'ONSET_LOCATIONS': onset_location, 'HFC': total_hfc, 'THRESHOLD': total_th,

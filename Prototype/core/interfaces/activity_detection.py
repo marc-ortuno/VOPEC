@@ -15,46 +15,59 @@ def activity_detection(func_type, signal, sample_rate, buffer_len, previous_ODF,
 def activity_detection_1(signal, sample_rate, buffer_len, previous_ODF, highest_peak):
     """
     Activity-Detection interface
-    :param signal: Signal
+    :param signal: Sub-band Signal
     :param sample_rate: Int
     :output flag: Boolean (onset/offset)
     :output signal_hfc: High Frequency Content Function
     """
 
     flag = False
-    threshold = 0
-
+    threshold = np.zeros(len(signal))
     # Compute FFT and HFCv2
-    signal_fft = np.fft.fft(signal, signal.size)
-    ODF = hfc(signal_fft)
+    ODF = hfc(signal)
 
-    if ODF >= np.mean(highest_peak):
-        highest_peak.append(ODF)
+    peak_indices = np.where(ODF > np.mean(highest_peak))
+
+    if peak_indices[0].size > 0:
+        highest_peak = np.vstack([highest_peak, ODF])
 
     # Since we want to avoid the false peaks and the onset-detection is real-time, we use calculate
     # the thresholds using a slight variation of the median/mean function for each frame.
     # https://asp-eurasipjournals.springeropen.com/track/pdf/10.1186/1687-6180-2011-68.pdf
 
-    l = 0.8
-    a = 1
+    l = 0.3
+    a = 0.5
+    d = 0.03
+
     m = 7
 
-    N = np.mean(highest_peak) * 0.03
-    # print(N)
-    m_ODF = previous_ODF[-m:]
-    m_ODF.append(ODF)
-    nm_ODF = m_ODF
+    band_onset = 0
 
-    if len(nm_ODF) >= 7:
-        threshold = (l * np.median(nm_ODF) + a * np.mean(nm_ODF)) + N
-    else:
-        threshold = N
+    for i in range(0, len(ODF)):
+        if highest_peak.ndim >= 2:
+            N = np.mean(highest_peak[:, i]) * d
+        else:
+            N = np.mean(highest_peak) * d
+
+
+        # print(N)
+        if previous_ODF.ndim >= 2:
+            m_ODF = previous_ODF[-m:, i]
+            m_ODF = np.append(m_ODF, ODF[i])
+            nm_ODF = m_ODF
+            threshold[i] = (l * np.median(nm_ODF) + a * np.mean(nm_ODF)) + N
+        else:
+            threshold[i] = N
+
+        if ODF[i] > threshold[i]:
+            band_onset += 1
+
 
     # Peak Picking
     # values = sum(i >= threshold for i in ODF)
     # print(values)
-
-    if ODF > threshold:
+    bands_threshold = int((len(signal) // 1.75))
+    if band_onset >= bands_threshold:
         flag = True
     else:
         flag = False
@@ -63,5 +76,8 @@ def activity_detection_1(signal, sample_rate, buffer_len, previous_ODF, highest_
 
 
 def hfc(fft):
-    hfc = np.sum(np.abs(np.power(fft, 2)) * np.arange(1, fft.size + 1))
+    hfc = np.zeros(len(fft))
+    for i in range(0, len(fft)):
+        fft_band = fft[i]
+        hfc[i] = np.sum(np.abs(np.power(fft_band, 2)) * np.arange(1, fft_band.size + 1))
     return hfc

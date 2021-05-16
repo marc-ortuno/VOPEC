@@ -12,10 +12,10 @@ import pandas as pd
 from utils.load_csv import get_prediction_time_instants
 
 '''
-Classificator/system evaluation
+Classificator evaluation
 
-The purpose of this script is to obtain the precision, recall, f-score and accuracy metrics of the beatbox 
-classification interface by comparing the classificator output with the corresponding groundtruth (annotation file).
+The purpose of this script is to obtain the whole system precision, recall, f-score and accuracy metrics of the beatbox 
+by combining the activity detection system with the different classification models.
 
 '''
 

@@ -39,6 +39,7 @@ def run_test(wav_dir, csv_dir, buffer_size, log_file):
     '''
 
     # Load audio and its annotation
+    print(wav_dir)
     audio = Waveform(path=wav_dir)
     groundtruth_annotation = load_annotation(csv_dir)
 

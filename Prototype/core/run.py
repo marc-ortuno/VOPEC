@@ -67,7 +67,8 @@ print('\n Precision:' + str(precision_ad) +
 print('----------------------------------------------------------------------')
 print('Classification evaluation:')
 plot_evaluation_report(report)
-plot_confusion_matrix(cm)
+if len(cm) == 3:
+    plot_confusion_matrix(cm)
 print('----------------------------------------------------------------------')
 print('System evaluation:')
 print('\n Precision:' + str(precision) +
