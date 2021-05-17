@@ -109,7 +109,6 @@ def process(input_buffer, output_buffer):
             previous_hfc = np.vstack((previous_hfc, hfc))
             previous_th = np.vstack((previous_th, threshold))
 
-
             # To prevent repeated reporting of an
             # onset (and thus producing numerous false positive detections), an
             # onset is only reported if no onsets have been detected in the previous three frames (30 ms aprox).

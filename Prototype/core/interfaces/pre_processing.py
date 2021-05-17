@@ -37,8 +37,8 @@ def pre_processing(signal, fs, N):
     # Several onset detection studies have found it useful to independently analyze information across different frequency
     # bands. In some cases this preprocessing is needed to satisfy
     # the needs of specific applications that require detection in individual sub-bands to complement global estimates;
-    fft_signal = np.fft.fft(hp_filtered_signal.real, n)  # Compute FFT
+    fft_signal = np.fft.fft(hp_filtered_signal, n)  # Compute FFT
 
     sub_band_signal = np.array(np.array_split(fft_signal, N))
 
-    return sub_band_signal, hp_filtered_signal.real
+    return sub_band_signal, hp_filtered_signal

@@ -8,6 +8,10 @@ from evaluate import evaluate_system, evaluate_activity_detection, evaluate_clas
 import pickle
 import pandas as pd
 
+"""
+The run script is used to run an off-line simulation of the system in order to evaluate some interfaces 
+for performance testing.
+"""
 # Import model
 from utils.load_csv import get_prediction_time_instants, load_annotation
 

@@ -83,7 +83,6 @@ Plot ODF function
 
 def plot_odf(name, signal, signal_proc, sr, onsets, hfc, th):
     so_time = np.arange(signal.size) / sr
-    sp_time = np.arange(signal_proc.size) / sr
     onsets_time = np.arange(len(onsets)) / sr
     hfc_time = np.arange(len(hfc)) / sr
     th_time = np.arange(len(th)) / sr

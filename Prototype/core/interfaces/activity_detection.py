@@ -35,8 +35,8 @@ def activity_detection_1(signal, sample_rate, buffer_len, previous_ODF, highest_
     # the thresholds using a slight variation of the median/mean function for each frame.
     # https://asp-eurasipjournals.springeropen.com/track/pdf/10.1186/1687-6180-2011-68.pdf
 
-    l = 0.3
-    a = 0.5
+    l = 0.5
+    a = 0.6
     d = 0.03
 
     m = 7
@@ -66,7 +66,7 @@ def activity_detection_1(signal, sample_rate, buffer_len, previous_ODF, highest_
     # Peak Picking
     # values = sum(i >= threshold for i in ODF)
     # print(values)
-    bands_threshold = int((len(signal) // 1.75))
+    bands_threshold = int((len(signal) // 1.2))
     if band_onset >= bands_threshold:
         flag = True
     else:
