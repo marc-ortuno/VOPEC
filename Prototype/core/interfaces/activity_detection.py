@@ -36,7 +36,7 @@ def activity_detection_1(signal, sample_rate, buffer_len, previous_ODF, highest_
     # https://asp-eurasipjournals.springeropen.com/track/pdf/10.1186/1687-6180-2011-68.pdf
 
     l = 0.5
-    a = 0.6
+    a = 0.5
     d = 0.03
 
     m = 7

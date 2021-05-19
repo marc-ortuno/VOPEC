@@ -1,5 +1,4 @@
 import numpy as np
-
 from app import main, init_activity_detection, init_classificator, init_feature_extraction, init_pre_processing
 from models import Waveform
 from utils import load_groundtruth, read_csv, plot_metrics_classification_boxplot

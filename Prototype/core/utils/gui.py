@@ -20,6 +20,7 @@ def plot_audio(wave_file, processed_file, sr):
         t = np.arange(wave_file.size) / sr
         t2 = np.arange(processed_file.size) / sr
 
+
     _, axs = plt.subplots(4, 1)
     plt.sca(axs[0])
     plt.title("Signal and processed signal")
@@ -242,7 +243,7 @@ def plot_metrics_classification_boxplot(precision, recall, f1_score, title, x, d
     sn.set_theme(style="whitegrid")
     sn.boxplot(data=data)
     plt.xticks(plt.xticks()[0], x)
-    #plt.show()
+    # plt.show()
     plt.savefig(dir + '.png')
 
 
