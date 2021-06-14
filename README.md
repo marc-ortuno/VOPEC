@@ -1,6 +1,6 @@
 # VOPEC - Vocal Percussion Classification for Real Time Context
 
-A Python prototype capable of classifying a stream of vocalized percussion (beatbox) in real-time.
+A prototype ready to classify an input stream of vocalized percussion in real-time.
 
 # Usage
 
