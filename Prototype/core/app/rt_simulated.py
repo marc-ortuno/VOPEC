@@ -72,7 +72,7 @@ def init(sr, b_len, audio_len=0):
 
     samp_freq = sr
     buffer_len = b_len
-    avg_duration = 0.100  # in seconds
+    avg_duration = 0.100 # in seconds
     onset_duration = int(avg_duration / (b_len / sr))  # 150ms average duration of a class
     onset_timeout = onset_duration
 
@@ -112,18 +112,20 @@ def process(input_buffer, output_buffer):
             # To prevent repeated reporting of an
             # onset (and thus producing numerous false positive detections), an
             # onset is only reported if no onsets have been detected in the previous three frames (30 ms aprox).
-            th = previous_th[-2:].sum(axis=1)
-
+            mHfc = previous_hfc[-2:].sum(axis=1)
+            mTh = previous_th[-2:].sum(axis=1)
             if last_onset is True and onset is False:
                 if onset_timeout > 0:
                     onset = True
                     onset_timeout -= 1
                     activity_detected = False
                 else:
+                    onset = False
                     onset_timeout = onset_duration
                     activity_detected = True
 
-                if len(th) > 1 and int(th[1]) < int(th[0]) and int(th[1]) - int(th[0]) >= (-4* buffer_len):
+                if len(mHfc) > 1 and int(mHfc[1]) < int(mHfc[0]) and len(mTh) > 1 and int(mTh[1]) <= int(mTh[0]) and\
+                        int(mHfc[0]) - int(mHfc[1]) < (4 * buffer_len):
                     onset = False
                     onset_timeout = onset_duration
                     activity_detected = True

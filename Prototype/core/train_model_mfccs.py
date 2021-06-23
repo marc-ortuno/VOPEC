@@ -89,7 +89,7 @@ def classify_and_plot(data):
 
     X = np.array(normalize(X))
     Y = np.array(Y)
-    X_train, X_test, y_train, y_test = train_test_split(X, Y)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.1)
 
     # init vars
     n_neighbors = 1
@@ -125,6 +125,7 @@ def classify_and_plot(data):
         knn.fit(X_train, y_train)
         scores.append(knn.score(X_test, y_test))
     plt.figure()
+    plt.title("Accuracy of the model according to k value")
     plt.xlabel('k')
     plt.ylabel('accuracy')
     plt.scatter(k_range, scores)
@@ -162,7 +163,7 @@ def normalize(data):
 
 # dataset_analyzer(data)
 knn_model = classify_and_plot(get_dataset())
-# features_boxplot()
+features_boxplot()
 # save the model to disk
 filename = './app/finalized_model_mfccs.sav'
 pickle.dump(knn_model, open(filename, 'wb'))

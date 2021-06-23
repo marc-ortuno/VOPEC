@@ -24,7 +24,7 @@ def plot_audio(wave_file, processed_file, sr):
     _, axs = plt.subplots(4, 1)
     plt.sca(axs[0])
     plt.title("Signal and processed signal")
-    plt.plot(t, wave_file, color='c', LineWidth=1.5, label='Noisy')
+    plt.plot(t, wave_file, color='c', LineWidth=1.5, label='Original signal')
     plt.xlim(t[0], t[-1])
     plt.legend()
 
@@ -36,7 +36,7 @@ def plot_audio(wave_file, processed_file, sr):
     plt.ylabel('Frequency')
 
     plt.sca(axs[2])
-    plt.plot(t2, processed_file, color='k', LineWidth=1.5, label='Clean')
+    plt.plot(t2, processed_file, color='k', LineWidth=1.5, label='Processed signal')
     plt.xlim(t2[0], t2[-1])
     plt.legend()
 
@@ -111,7 +111,7 @@ def plot_odf(name, signal, signal_proc, sr, onsets, hfc, th):
     plot_d = plt.subplot(313)
     plot_d.plot(onsets_time, onsets, color="r")
     plot_d.set_xlabel('Time')
-    plot_d.set_ylabel('Onset')
+    plot_d.set_ylabel('Activity')
 
     plt.subplots_adjust(hspace=0.5)
     plt.show()
@@ -233,6 +233,7 @@ def plot_metrics_boxplot(precision, recall, f1_score, accuracy, buffer_size):
     sn.swarmplot(data=data, size=6, edgecolor="black", linewidth=.9)
     plt.xticks(plt.xticks()[0], x)
     # plt.show()
+    plt.title("Buffer size: " + str(buffer_size))
     plt.savefig('./figures/boxplot_adaptative_' + str(buffer_size) + '.png')
 
 

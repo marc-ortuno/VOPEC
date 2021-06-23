@@ -9,7 +9,7 @@ import sys
 import numpy as np
 
 
-def classification_assignment(groundtruth, predicted):
+def event_assignment(groundtruth, predicted):
     """
     This algorithm solves the problem of assigning a prediction class with its corresponding groundtruth.
     """
@@ -24,6 +24,12 @@ def classification_assignment(groundtruth, predicted):
             groundtruth_onset = float(groundtruth[j][0])
             distance = np.abs(groundtruth_onset - predicted_onset)
             matrix[ii, jj] = distance
+
+    # plt.imshow(matrix)
+    # plt.colorbar()
+    # plt.ylabel("Predicted")
+    # plt.xlabel("Ground truth")
+    # plt.show()
 
     th = 0.05
     assignment_index = []
@@ -49,7 +55,7 @@ def evaluate_system(groundtruth, predicted):
     """
     Evaluate the whole system
     """
-    m_groundtruth, m_prediction, assignment = classification_assignment(groundtruth, predicted)
+    m_groundtruth, m_prediction, assignment = event_assignment(groundtruth, predicted)
 
     # Metrics
     TP = 0
@@ -71,7 +77,11 @@ def evaluate_system(groundtruth, predicted):
     else:
         precision = TP / (TP + FP)
         recall = TP / (TP + FN)
+
+    if precision != 0 and recall != 0:
         fscore = 2 * ((precision * recall) / (precision + recall))
+    else:
+        fscore = 0
 
     return precision, recall, fscore
 
@@ -80,7 +90,7 @@ def evaluate_classificator(groundtruth, predicted):
     """
     Evaluate the classificator interface
     """
-    m_groundtruth, m_prediction, assignment = classification_assignment(groundtruth, predicted)
+    m_groundtruth, m_prediction, assignment = event_assignment(groundtruth, predicted)
 
     report = classification_report(m_groundtruth, m_prediction, output_dict=True)
     cm = confusion_matrix(m_groundtruth, m_prediction)

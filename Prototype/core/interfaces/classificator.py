@@ -3,7 +3,7 @@ import numpy as np
 
 def classificator(features, model):
     """
-    Pre-processing interface
+    Classificator interface
     :param features: Array of features
     :param model : KNeighborsClassifier
     :output class_tag: Int

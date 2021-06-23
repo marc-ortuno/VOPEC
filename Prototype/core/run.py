@@ -20,8 +20,8 @@ knn_model = pickle.load(open(filename, 'rb'))
 model_normalization = './app/model_normalization_mfccs.csv'
 
 normalization_values = pd.read_csv(model_normalization)
-# ../../RawDataset/LML_1617020140983/Kick_LML
-path = '../../RawDataset/MOB_1616751225808/Snare_MOB'
+
+path = '../../RawDataset/JVS_1617180378425/Snare_JVS'
 
 audio = Waveform(path=path + ".wav")
 groundtruth = load_annotation(path + ".csv")

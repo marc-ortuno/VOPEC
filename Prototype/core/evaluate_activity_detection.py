@@ -134,12 +134,12 @@ def buffer_size_test(path, buffer_sizes):
 
 
 startpath = "../../RawDataset"  # Root dir of test audios
-buffer_sizes = [128, 256, 512, 1024, 2048, 4096]  # Different buffer size of the test
+buffer_sizes = [512]  # Different buffer size of the test
 
-# buffer_size_test(startpath, buffer_sizes)
+buffer_size_test(startpath, buffer_sizes)
 
 # Run tests
-all_dataset_test(startpath)
+#all_dataset_test(startpath)
 
 # Save plots
 generate_plots(buffer_sizes, proposal=3)

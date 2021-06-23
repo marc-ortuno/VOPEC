@@ -39,7 +39,7 @@ duration = 10
 # GUI
 window = tk.Tk()
 window.geometry("400x400")
-window.title("Beatbox classifier")
+window.title("VOPEC")
 selected = ""
 prediction_label = tk.Label(window, text="", font='Helvetica 18 bold')
 # Playback sounds

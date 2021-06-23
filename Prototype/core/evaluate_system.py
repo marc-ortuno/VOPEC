@@ -45,7 +45,7 @@ def run_test(wav_dir, csv_dir, buffer_size, log_file, proposal):
     # Load audio and its annotation
     audio = Waveform(path=wav_dir)
     groundtruth = read_csv(csv_dir)
-
+    print(wav_dir)
     # Init system simulation
     init_pre_processing()
     init_activity_detection()
@@ -104,7 +104,7 @@ def generate_plots():
     '''
     Read log file and creates a boxplot
     '''
-    proposals = ["mfcc", "all"]
+    proposals = ["mfcc"]
     for proposal in proposals:
         final_dir = tests_dir + '/system_log_' + str(proposal)
         evaluation_csv = read_csv(final_dir + '.csv')
@@ -128,7 +128,7 @@ def generate_plots():
 startpath = "../../RawDataset"  # Root dir of test audios
 
 # Run tests
-#all_dataset_test(startpath, proposal="mfcc")
+all_dataset_test(startpath, proposal="mfcc")
 
 # Save plots
 generate_plots()

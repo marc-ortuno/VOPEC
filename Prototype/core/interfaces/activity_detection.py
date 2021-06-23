@@ -35,9 +35,9 @@ def activity_detection_1(signal, sample_rate, buffer_len, previous_ODF, highest_
     # the thresholds using a slight variation of the median/mean function for each frame.
     # https://asp-eurasipjournals.springeropen.com/track/pdf/10.1186/1687-6180-2011-68.pdf
 
-    l = 0.5
-    a = 0.5
-    d = 0.03
+    l = 0.7
+    a = 0.7
+    d = 0.06
 
     m = 7
 
@@ -66,7 +66,7 @@ def activity_detection_1(signal, sample_rate, buffer_len, previous_ODF, highest_
     # Peak Picking
     # values = sum(i >= threshold for i in ODF)
     # print(values)
-    bands_threshold = int((len(signal) // 1.2))
+    bands_threshold = 4
     if band_onset >= bands_threshold:
         flag = True
     else:
@@ -79,5 +79,6 @@ def hfc(fft):
     hfc = np.zeros(len(fft))
     for i in range(0, len(fft)):
         fft_band = fft[i]
-        hfc[i] = np.sum(np.abs(np.power(fft_band, 2)) * np.arange(1, fft_band.size + 1))
+        band_size = fft_band.size
+        hfc[i] = np.sum(np.abs(np.power(fft_band, 2)) * np.arange(i*band_size + 1, (i*band_size) + band_size + 1))
     return hfc
