@@ -23,10 +23,10 @@ input. On each callback we execute de process of the prototype.
 """
 
 # Import model
-filename = './app/finalized_model_mfccs.sav'
+filename = './app/finalized_model_all_features.sav'
 knn_model = pickle.load(open(filename, 'rb'))
 
-model_normalization = './app/model_normalization_mfccs.csv'
+model_normalization = './app/model_normalization_all_features.csv'
 normalization_values = pd.read_csv(model_normalization)
 
 signal_original = []
@@ -103,7 +103,7 @@ def select_device_and_run(event):
 
     init_pre_processing()
     init_activity_detection()
-    init_feature_extraction(func_type="mfcc", n_mfcc_arg=20, norm_file=normalization_values)
+    init_feature_extraction(func_type="all", n_mfcc_arg=10, norm_file=normalization_values)
     init_classificator(knn_model=knn_model)
     init(sample_rate, buffer_size)
 

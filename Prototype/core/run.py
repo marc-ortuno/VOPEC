@@ -21,7 +21,7 @@ model_normalization = './app/model_normalization_mfccs.csv'
 
 normalization_values = pd.read_csv(model_normalization)
 
-path = '../../RawDataset/JVS_1617180378425/Snare_JVS'
+path = '../../TrainDataset/LOD_1624992635178/Snare_LOD'
 
 audio = Waveform(path=path + ".wav")
 groundtruth = load_annotation(path + ".csv")
@@ -70,6 +70,7 @@ print('\n Precision:' + str(precision_ad) +
 print('----------------------------------------------------------------------')
 print('Classification evaluation:')
 plot_evaluation_report(report)
+print(prediction)
 if len(cm) == 3:
     plot_confusion_matrix(cm)
 print('----------------------------------------------------------------------')

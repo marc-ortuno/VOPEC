@@ -244,6 +244,9 @@ def plot_metrics_classification_boxplot(precision, recall, f1_score, title, x, d
     sn.set_theme(style="whitegrid")
     sn.boxplot(data=data)
     plt.xticks(plt.xticks()[0], x)
+    plt.rc('xtick', labelsize=9)
+    plt.rc('ytick', labelsize=10)
+    plt.ylim(0, 1)
     # plt.show()
     plt.savefig(dir + '.png')
 

@@ -121,7 +121,7 @@ def trim_files(startpath):
     output:
         - trimmed files: trimmed files organized in folders
     '''
-    dataset_dir = '../Dataset'
+    dataset_dir = '../TDataset'
 
     #create root folder
     if not os.path.exists(dataset_dir):
@@ -155,4 +155,4 @@ def trim_files(startpath):
                         trim_audio(startpath+folder+w,dataset_dir,csv_output,file_name,participant_data)
      
      
-trim_files('../RawDataset')    
+trim_files('../RawDataset')

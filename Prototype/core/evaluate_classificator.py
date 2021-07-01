@@ -22,10 +22,10 @@ classification interface by comparing the classificator output with the correspo
 # save test metrics in a csv to then make
 tests_dir = 'evaluation_logs/classificator_evaluation'
 # Import model
-filename = './app/finalized_model_mfccs.sav'
+filename = './app/finalized_model_all_features.sav'
 knn_model = pickle.load(open(filename, 'rb'))
 
-model_normalization = './app/model_normalization_mfccs.csv'
+model_normalization = './app/model_normalization_all_features.csv'
 normalization_values = pd.read_csv(model_normalization)
 # create root folder
 if not os.path.exists(tests_dir):
@@ -49,7 +49,7 @@ def run_test(wav_dir, csv_dir, buffer_size, log_file, proposal):
     # Init system simulation
     init_pre_processing()
     init_activity_detection()
-    init_feature_extraction(func_type=proposal, n_mfcc_arg=20, norm_file=normalization_values)
+    init_feature_extraction(func_type=proposal, n_mfcc_arg=10, norm_file=normalization_values)
     init_classificator(knn_model=knn_model)
 
     # run simulation
@@ -61,7 +61,7 @@ def run_test(wav_dir, csv_dir, buffer_size, log_file, proposal):
     report, cm = evaluate_classificator(groundtruth, prediction)
 
     #plot_confusion_matrix(cm)
-    metrics = report['macro avg']
+    metrics = report['weighted avg']
     row = [wav_dir, metrics.get('precision'), metrics.get('recall'), metrics.get('f1-score')]
 
     with open(log_file, 'a+', newline='') as file:
@@ -121,16 +121,16 @@ def generate_plots():
             f1_score.append(evaluation_csv[i][3])
 
         title = "Evaluation of classification for '" + proposal + "' model"
-        x = ['Precision (macro avg)', 'Recall (macro avg)', 'F1-Score (macro avg)']
+        x = ['Precision (weighted avg)', 'Recall (weighted avg)', 'F1-Score (weighted avg)']
         plot_metrics_classification_boxplot(precision, recall, f1_score, title, x, final_dir)
 
 
 
 
-startpath = "../../RawDataset"  # Root dir of test audios
+startpath = "../../TrainDataset"  # Root dir of test audios
 
 # Run tests
-all_dataset_test(startpath, proposal="mfcc")
+# all_dataset_test(startpath, proposal="all")
 
 # Save plots
 generate_plots()
